@@ -1,7 +1,5 @@
 language: node_js
 node_js:
-  - "0.6"
-  - "0.8"
   - "0.10"
 
 env:
@@ -29,9 +27,3 @@ script:
 
 after_script:
   - sudo service cassandra stop
-
-notifications:
-  email: false
-  campfire:
-    secure: "24WluBFSwNgmXL+ulZrwEQojuHdCbTQZ5mdLTo5gOsm6j8h6AIjU/U+ubHcu\nNaEufjkCuGwr4LWTInFEjwe+kq6SqiXCstJ8BHu/eM1IYwKbHO9U23WEemVF\n6vWHoNVHWdQeUTLBZRaqYMp07c32q5Xsn5LREXeO6I8f42l0yac="
-
