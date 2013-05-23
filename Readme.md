@@ -29,12 +29,12 @@ For coverage:
 ```javascript
 var helenus = require('helenus'),
     pool = new helenus.ConnectionPool({
-      hosts      : ['localhost:9160'],
-      keyspace   : 'helenus_test',
-      user       : 'test',
-      password   : 'test1233',
-      timeout    : 3000
-      //cqlVersion : '3.0.0' // specify this if you're using Cassandra 1.1 and want to use CQL 3
+        hosts      : ['localhost:9160'],
+        keyspace   : 'helenus_test',
+        user       : 'test',
+        password   : 'test1233',
+        timeout    : 3000
+        //cqlVersion : '3.0.0' // specify this if you're using Cassandra 1.1 and want to use CQL 3
     });
 
 //optionally you can supply the 'getHost' parameter to the connection pool options which will
@@ -75,37 +75,37 @@ pool.connect(function(err, keyspace){
 If you do not want to use CQL, you can make calls using the thrift driver
 
 ```javascript
-  pool.connect(function(err, keyspace){
+pool.connect(function(err, keyspace){
+if(err){
+  throw(err);
+}
+
+//first retreive the column family from the server
+//helenus will cache column families it has already seen
+keyspace.get('my_cf', function(err, cf){
+  if(err){
+    throw(err);
+  }
+
+  //insert something into the column family
+  cf.insert('foo', {'bar':'baz'}, function(err){
     if(err){
       throw(err);
     }
 
-    //first retreive the column family from the server
-    //helenus will cache column families it has already seen
-    keyspace.get('my_cf', function(err, cf){
+    //get what we just put in
+    //the driver will return a helenus.Row object just like CQL
+    cf.get('foo', {consistency:helenus.ConsistencyLevel.ONE} function(err, row){
       if(err){
         throw(err);
       }
 
-      //insert something into the column family
-      cf.insert('foo', {'bar':'baz'}, function(err){
-        if(err){
-          throw(err);
-        }
-
-        //get what we just put in
-        //the driver will return a helenus.Row object just like CQL
-        cf.get('foo', {consistency:helenus.ConsistencyLevel.ONE} function(err, row){
-          if(err){
-            throw(err);
-          }
-
-          row.get('bar').value // => baz
-        });
-      });
+      row.get('bar').value // => baz
     });
-
   });
+});
+
+});
 ```
 
 ### Thrift Support
@@ -186,22 +186,25 @@ columns x through y, it returns a Helenus row object of columns that match the s
 Slices the columns based on part of their column name. returns a Helenus row of columns
 that match the slice
 
-    results.forEach(function(row){
-      //gets all columns that start with a, b, c, or d
-      console.log(row.nameSlice('a','e'));
-    });
+```javascript
+results.forEach(function(row)
+{
+    // gets all columns that start with a, b, c, or d
+    console.log(row.nameSlice('a','e'));
+});
+```
 
 ## Column
 
 Columns are returned as objects with the following structure:
 
 ```javascript
-  {
+{
     name: 'Foo',       //The column name
     value: 'bar',      //The column value
     timestamp: Date(), //The date object of the timestamp for the column
     ttl: 123456        //The ttl (in milliseconds) for the columns
-  }
+}
 ```
 
 ## ConsistencyLevel
@@ -218,6 +221,8 @@ cf.insert(key, values, {consistency : helenus.ConsistencyLevel.ANY}, callback);
 * Russell Bradberry - @devdazed
 * Matthias Eder - @matthiase
 * Christoph Tavan - @ctavan
+* C J Silverio - @ceejbot
+* Kit Cambridge - @kitcambridge
 
 ## License
 
