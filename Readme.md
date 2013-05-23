@@ -1,77 +1,73 @@
-# Helenus
+# Scamandrios
 
-  NodeJS Bindings for Cassandra
-
-  Currently the driver has full CQL support and a growing support for thrift (non-cql) commands.
-  If you would like to contribute, please contact Russ Bradberry &lt;rbradberry@simplereach.com&gt;
-
-  If you have any questions regarding the driver, please visit our [google group](https://groups.google.com/forum/?fromgroups#!forum/helenus)
-
+A promises API for Cassandra, forked from [helenus](https://github.com/simplereach/helenus). Helenus was Cassandra's twin brother. He was also known as Scamandrios.
 
 ### Build Status
 
-  [![Build Status](https://secure.travis-ci.org/simplereach/helenus.png)](http://travis-ci.org/simplereach/helenus)
+TravisCI builds are not yet enabled.
+
+[![Build Status](https://secure.travis-ci.org/ceejbot/scamandrios.png)](http://travis-ci.org/ceejbot/scamandrios)
 
 ## Installation
 
-    npm install helenus
+`npm install scamandrios`
 
 ## Running Tests
 
-  Ensure cassandra is running on localhost:9160.
+Ensure cassandra is running on localhost:9160.
 
-    make test
+`make test`
 
-  For coverage
+For coverage:
 
-    make test-cov
+`make test-cov`
 
 ## Usage
 
 ## CQL
 
 ```javascript
-  var helenus = require('helenus'),
-      pool = new helenus.ConnectionPool({
-        hosts      : ['localhost:9160'],
-        keyspace   : 'helenus_test',
-        user       : 'test',
-        password   : 'test1233',
-        timeout    : 3000
-        //cqlVersion : '3.0.0' // specify this if you're using Cassandra 1.1 and want to use CQL 3
-      });
+var helenus = require('helenus'),
+    pool = new helenus.ConnectionPool({
+      hosts      : ['localhost:9160'],
+      keyspace   : 'helenus_test',
+      user       : 'test',
+      password   : 'test1233',
+      timeout    : 3000
+      //cqlVersion : '3.0.0' // specify this if you're using Cassandra 1.1 and want to use CQL 3
+    });
 
-  //optionally you can supply the 'getHost' parameter to the connection pool options which will
-  // allow you to override the default random host decision
+//optionally you can supply the 'getHost' parameter to the connection pool options which will
+// allow you to override the default random host decision
 
-  //if you don't listen for error, it will bubble up to `process.uncaughtException`
-  //pools act just like connection objects, so you don't have to worry about api
-  //differences when using either the pool or the connection
-  pool.on('error', function(err){
-    console.error(err.name, err.message);
-  });
+//if you don't listen for error, it will bubble up to `process.uncaughtException`
+//pools act just like connection objects, so you don't have to worry about api
+//differences when using either the pool or the connection
+pool.on('error', function(err){
+  console.error(err.name, err.message);
+});
 
-  //makes a connection to the pool, this will return once there is at least one
-  //valid connection, other connections may still be pending
-  pool.connect(function(err, keyspace){
-    if(err){
-      throw(err);
-    } else {
-      //to use cql, access the pool object once connected
-      //the first argument is the CQL string, the second is an `Array` of items
-      //to interpolate into the format string, the last is the callback
-      //for formatting specific see `http://nodejs.org/docs/latest/api/util.html#util.format`
-      //results is an array of row objects
+//makes a connection to the pool, this will return once there is at least one
+//valid connection, other connections may still be pending
+pool.connect(function(err, keyspace){
+  if(err){
+    throw(err);
+  } else {
+    //to use cql, access the pool object once connected
+    //the first argument is the CQL string, the second is an `Array` of items
+    //to interpolate into the format string, the last is the callback
+    //for formatting specific see `http://nodejs.org/docs/latest/api/util.html#util.format`
+    //results is an array of row objects
 
-      pool.cql("SELECT col FROM cf_one WHERE key = ?", ['key123'], function(err, results){
-        console.log(err, results);
-      });
+    pool.cql("SELECT col FROM cf_one WHERE key = ?", ['key123'], function(err, results){
+      console.log(err, results);
+    });
 
-      //NOTE:
-      //- You can always skip quotes around placeholders, they are added automatically.
-      //- In CQL 3 you cannot use placeholders for ColumnFamily names or Column names.
-    }
-  });
+    //NOTE:
+    //- You can always skip quotes around placeholders, they are added automatically.
+    //- In CQL 3 you cannot use placeholders for ColumnFamily names or Column names.
+  }
+});
 ```
 
 ## Thrift
