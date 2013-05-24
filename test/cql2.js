@@ -187,7 +187,19 @@ describe('CQL 2', function ()
 
         it('can reject invalid CQL', function ()
         {
-            return pool.cql(commands['error#cql']).should.be.rejected.with(Error);
+            var promise = pool.cql(commands['error#cql']);
+
+            return P.all(
+            [
+                promise.should.be.rejected,
+                promise.fail(function (error)
+                {
+                    return error;
+                }).should.eventually.have.property('name', 'InvalidRequestException').then(function (error)
+                {
+                    return error.why.length;
+                }).should.eventually.be.above(0)
+            ]);
         });
 
         it('can return query results with `gzip` enabled', function ()
