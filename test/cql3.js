@@ -195,7 +195,7 @@ describe('cql3', function()
             return P.all(
             [
                 promise.should.be.rejected,
-                promise.fail(_.identity).should.eventually.have.property('name', 'InvalidRequestException').then(function (error)
+                promise.fail(_.identity).should.eventually.have.property('name', 'InvalidRequestException').then(function(error)
                 {
                     return error.why.length;
                 }).should.eventually.be.above(0)
@@ -206,10 +206,10 @@ describe('cql3', function()
         {
             var promise = conn.cql(config['static_count#cql'], { gzip:true }).should.be.fulfilled;
 
-            return promise.should.eventually.have.property('length', 1).then(function (value)
+            return promise.should.eventually.have.property('length', 1).then(function(value)
             {
                 return value[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).then(function (row)
+            }).should.eventually.be.an.instanceof(scamandrios.Row).then(function(row)
             {
                 return row.get('count').value;
             }).should.eventually.equal(1);
@@ -424,6 +424,72 @@ describe('cql3', function()
             });
         });
 
+    });
+
+    describe('integers', function()
+    {
+        it('can create column family', function()
+        {
+            var promise = conn.cql(config['integers_create_cf#cql']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can update 1', function()
+        {
+            var promise = conn.cql(config['integers_update#cql'], config['integers_update#vals1']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can update 2', function()
+        {
+            var promise = conn.cql(config['integers_update#cql'], config['integers_update#vals2']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can update 3', function()
+        {
+            var promise = conn.cql(config['integers_update#cql'], config['integers_update#vals3']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can select positive numbers', function()
+        {
+            var promise = conn.cql(config['integers_select1#cql']).should.be.fulfilled;
+
+            return promise.should.eventually.have.property('length', 1).then(function(result)
+            {
+                return result[0];
+            }).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 3).then(function(result)
+            {
+                return _.pluck([result.get('number'), result.get('longnumber'), result.get('varnumber')], 'value');
+            }).should.become([1, 25, 36]);
+        });
+
+        it('can select negative numbers', function()
+        {
+            var promise = conn.cql(config['integers_select2#cql']).should.be.fulfilled;
+
+            return promise.should.eventually.have.property('length', 1).then(function(result)
+            {
+                return result[0];
+            }).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 3).then(function(result)
+            {
+                return _.pluck([result.get('number'), result.get('longnumber'), result.get('varnumber')], 'value');
+            }).should.become([-1, -25, -36]);
+        });
+
+        it('can select negative numbers with 3 byte varint', function()
+        {
+            var promise = conn.cql(config['integers_select3#cql']).should.be.fulfilled;
+
+            return promise.should.eventually.have.property('length', 1).then(function(result)
+            {
+                return result[0];
+            }).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 3).then(function(result)
+            {
+                return _.pluck([result.get('number'), result.get('longnumber'), result.get('varnumber')], 'value');
+            }).should.become([-2, -25, -8388607]);
+        });
     });
 
     describe('dropping keyspaces', function()
