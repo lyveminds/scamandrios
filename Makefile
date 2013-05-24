@@ -1,13 +1,17 @@
+NPM_BIN := node_modules/.bin/
+MOCHA := $(addprefix $(NPM_BIN), mocha)
 TEST_FILES=$(wildcard test/*.js)
 
 test:
-	NODE_PATH=lib/ node_modules/whiskey/bin/whiskey --real-time --scope-leaks --tests "$(TEST_FILES)"
+	$(MOCHA) -R spec $(TEST_FILES)
 
 test-cov:
-	NODE_PATH=lib-cov/ node_modules/whiskey/bin/whiskey --real-time --scope-leaks --coverage --coverage-reporter html --coverage-dir test/coverage --coverage-no-instrument cassandra --tests "$(TEST_FILES)"
-	rm -rf lib-cov
+	$(MOCHA) --require blanket -R travis-cov $(TEST_FILES)
+
+coverage:
+	$(MOCHA) --require blanket -R html-cov $(TEST_FILES) > test/coverage.html
 
 doc:
 	rm -rf ./doc && node_modules/JSDoc/jsdoc -p -r ./lib -d ./doc
 
-.PHONY: test test-cov doc
+.PHONY: test test-cov coverage doc

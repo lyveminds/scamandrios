@@ -32,11 +32,19 @@
         "whiskey": "git://github.com/cloudkick/whiskey.git#b3c5bc23e30c95e46083bc7628c2557c1c15ec95",
         "JSDoc": "git://github.com/jsdoc3/jsdoc.git",
         "mocha-as-promised": "*",
-        "chai-as-promised": "*"
+        "chai-as-promised": "*",
+        "travis-cov": "*",
+        "blanket": "*"
     },
     "scripts":
     {
-        "test": "make test"
+        "test": "make test",
+        "blanket":
+        {
+            "pattern": "//^((?!\/node_modules|test|doc|examples\/).)*$/ig",
+            "onlyCwd": true
+        },
+        "travis-cov": { "threshold": 50 }
     },
     "main": "index",
     "engines": { "node": ">= 0.10" },
