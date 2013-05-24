@@ -158,7 +158,10 @@ describe('cql3', function()
             return promise.then(function(v1)
             {
                 var p2 = conn.cql(config['static_select_cnt#cql']);
-                return p2.should.be.fulfilled;
+                return p2.should.eventually.have.property('length', 1).then(function(value)
+                {
+                    return value[0];
+                });
             }).should.eventually.be.an.instanceof(scamandrios.Row).then(function(row)
             {
                 return row.get('cnt');
