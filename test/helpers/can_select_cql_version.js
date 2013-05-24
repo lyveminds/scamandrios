@@ -1,7 +1,7 @@
 var scamandrios = require('../../'),
     P = require('p-promise');
 
-module.exports = function canSelectCqlVersion(options)
+module.exports = function canSelectCQLVersion(options)
 {
     var connection = new scamandrios.Connection(options),
         deferred = P.defer();

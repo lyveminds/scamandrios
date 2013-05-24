@@ -17,28 +17,9 @@ chai.use(chaiAsPromised);
 var
     badConfig = require('./helpers/bad_connection'),
     poolConfig = require('./helpers/connection'),
-    config = require('./helpers/cql3')
+    config = require('./helpers/cql3'),
+    canSelectCQLVersion = require('./helpers/can_select_cql_version')
     ;
-
-
-
-// --- todo
-
-function canSelectCQLVersion(poolConfig, callback)
-{
-    var conn = new scamandrios.Connection(poolConfig);
-    conn.connect(function(err)
-    {
-        var canSelect = !(err && err.toString().indexOf('set_cql_version') !== -1);
-        conn.on('close', function()
-        {
-            callback(canSelect);
-        });
-        conn.close();
-    });
-}
-
-
 
 describe('cql3', function()
 {

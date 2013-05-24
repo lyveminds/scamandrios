@@ -1,3 +1,5 @@
+/*global describe: true, it: true, before: true, after: true */
+
 var chai = require('chai'),
     chaiAsPromised = require('chai-as-promised'),
     P = require('p-promise');
@@ -9,7 +11,7 @@ var scamandrios = require('../');
 var poolSettings = require('./helpers/connection.json'),
     badSettings = require('./helpers/bad_connection.json'),
     commands = require('./helpers/cql2.json'),
-    canSelectCqlVersion = require('./helpers/can_select_cql_version');
+    canSelectCQLVersion = require('./helpers/can_select_cql_version');
 
 var assert = chai.assert,
     expect = chai.expect;
@@ -17,14 +19,14 @@ var assert = chai.assert,
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('Connection Pool', function ()
+describe('CQL 2', function ()
 {
     var pool;
 
     before(function ()
     {
         poolSettings.cqlVersion = '2.0.0';
-        return canSelectCqlVersion(poolSettings).then(function (canSelect)
+        return canSelectCQLVersion(poolSettings).then(function (canSelect)
         {
             if (!canSelect)
             {
@@ -185,7 +187,7 @@ describe('Connection Pool', function ()
 
         it('can reject invalid CQL', function ()
         {
-            return pool.cql(commands['error#cql']).should.be.rejected.with(Error);;
+            return pool.cql(commands['error#cql']).should.be.rejected.with(Error);
         });
 
         it('can return query results with `gzip` enabled', function ()
