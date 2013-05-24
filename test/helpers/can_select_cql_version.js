@@ -1,12 +1,18 @@
-var Helenus = require('helenus');
+var scamandrios = require('../../'),
+    P = require('p-promise');
 
-module.exports = function(poolConfig, callback){
-  var conn = new Helenus.Connection(poolConfig);
-  conn.connect(function(err){
-    var canSelect = !(err && err.toString().indexOf('set_cql_version') !== -1);
-    conn.on('close', function(){
-      callback(canSelect);
-    });
-    conn.close();
-  });
+module.exports = function canSelectCqlVersion(options)
+{
+    var connection = new scamandrios.Connection(options),
+        deferred = P.defer();
+    connection.on('close', deferred.resolve);
+    function handleSettle(error)
+    {
+        connection.close();
+        return deferred.promise.then(function ()
+        {
+            return !(/set_cql_version/.test(error));
+        });
+    }
+    return connection.connect().then(handleSettle, handleSettle);
 };
