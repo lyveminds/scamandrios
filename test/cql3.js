@@ -194,7 +194,7 @@ describe('cql3', function()
 
             return P.all(
             [
-                promise.should.be.rejected,
+                promise.should.be.rejected.with(Error),
                 promise.fail(_.identity).should.eventually.have.property('name', 'InvalidRequestException').then(function(error)
                 {
                     return error.why.length;
@@ -506,7 +506,7 @@ describe('cql3', function()
         var deferred = P.defer();
         conn.on('close', deferred.resolve);
         conn.close();
-        return deferred.promise;
+        return deferred.promise.should.be.fulfilled;
     });
 
 });

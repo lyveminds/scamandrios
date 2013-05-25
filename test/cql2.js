@@ -191,7 +191,7 @@ describe('CQL 2', function ()
 
             return P.all(
             [
-                promise.should.be.rejected,
+                promise.should.be.rejected.with(Error),
                 promise.fail(function (error)
                 {
                     return error;
@@ -260,7 +260,7 @@ describe('CQL 2', function ()
             var deferred = P.defer();
             pool.on('close', deferred.resolve);
             pool.close();
-            return deferred.promise;
+            return deferred.promise.should.be.fulfilled;
         });
     });
 });
