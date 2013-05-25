@@ -203,4 +203,8 @@
   * Added support for CQL3 in v1.2.0 [ @chris-rock #92 ]
   * Fixed CQL 3 in v 0.1.x [ @devdazed #93 ]
 
+0.7.0 / 2013-06-24
+==================
+
+  * Forked from helenus
 

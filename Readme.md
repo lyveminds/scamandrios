@@ -4,8 +4,6 @@ A promises API for Cassandra, forked from [helenus](https://github.com/simplerea
 
 ### Build Status
 
-TravisCI builds are not yet enabled.
-
 [![Build Status](https://secure.travis-ci.org/ceejbot/scamandrios.png)](http://travis-ci.org/ceejbot/scamandrios)
 
 ## Installation
@@ -26,49 +24,48 @@ For coverage:
 
 ## CQL
 
+Connection pools are interchangeable with connection objects. You can make all Cassandra API calls against pools or single connections the same way. To create a pool:
+
 ```javascript
-var helenus = require('helenus'),
-    pool = new helenus.ConnectionPool({
-        hosts      : ['localhost:9160'],
-        keyspace   : 'helenus_test',
-        user       : 'test',
-        password   : 'test1233',
-        timeout    : 3000
-        //cqlVersion : '3.0.0' // specify this if you're using Cassandra 1.1 and want to use CQL 3
-    });
+var scamandrios = require('scamandrios'),
+        pool = new scamandrios.ConnectionPool(
+        {
+                hosts      : ['localhost:9160'],
+                keyspace   : 'scamandrios_test',
+                user       : 'test',
+                password   : 'test1233',
+                timeout    : 3000
+                cqlVersion : '3.0.0', // optional
+                getHost    : getHostFunc, // optional
+        });
+```
 
-//optionally you can supply the 'getHost' parameter to the connection pool options which will
-// allow you to override the default random host decision
+Specify the `cqlVersion` parameter if you are using Cassandra 1.1 and want to use CQL 3.
 
-//if you don't listen for error, it will bubble up to `process.uncaughtException`
-//pools act just like connection objects, so you don't have to worry about api
-//differences when using either the pool or the connection
-pool.on('error', function(err){
-  console.error(err.name, err.message);
-});
+You can supply a function in the `getHost` parameter to override the random host selection that the pool will perform when handling a request. __NOTE:__ We intend to replace the pool implementation with one based on [poolee](https://github.com/dannycoates/poolee), so overriding will eventually be impossible as well as somethg you probably won't ever feel the need to do.
 
-//makes a connection to the pool, this will return once there is at least one
-//valid connection, other connections may still be pending
-pool.connect(function(err, keyspace){
-  if(err){
-    throw(err);
-  } else {
-    //to use cql, access the pool object once connected
-    //the first argument is the CQL string, the second is an `Array` of items
-    //to interpolate into the format string, the last is the callback
-    //for formatting specific see `http://nodejs.org/docs/latest/api/util.html#util.format`
-    //results is an array of row objects
+As with most error-emitting objects in node, if you do not listen for `error` it will bubble up to `process.uncaughtException`.
 
-    pool.cql("SELECT col FROM cf_one WHERE key = ?", ['key123'], function(err, results){
-      console.log(err, results);
-    });
-
-    //NOTE:
-    //- You can always skip quotes around placeholders, they are added automatically.
-    //- In CQL 3 you cannot use placeholders for ColumnFamily names or Column names.
-  }
+```javascript
+pool.on('error', function(err)
+{
+    console.error(err.name, err.message);
 });
 ```
+
+All asynchronous operations return promises in lieu of taking callbacks. The promises library used is [P](https://github.com/rkatic/p), which is Promises/A+ spec compliant. Here's an example of making a CQL query:
+
+```javascript
+pool.connect.then(function()
+{
+    pool.cql('SELECT col FROM cf_one WHERE key = ?', ['key123']).then(function(result)
+    {
+        console.log(result);
+    });
+})
+```
+
+The first argument to `cql()` is the query string. The second is an array of items to interpolate into the query string, which is accomplished using [util.format()](http://nodejs.org/docs/latest/api/util.html#util.format). The result is an array of Row objects. You can always skip quotes around placeholders. Quotes are added automatically. In CQL3 you cannot use placeholders for ColumnFamily or Column names.
 
 ## Thrift
 
@@ -77,32 +74,32 @@ If you do not want to use CQL, you can make calls using the thrift driver
 ```javascript
 pool.connect(function(err, keyspace){
 if(err){
-  throw(err);
+    throw(err);
 }
 
 //first retreive the column family from the server
 //helenus will cache column families it has already seen
 keyspace.get('my_cf', function(err, cf){
-  if(err){
-    throw(err);
-  }
-
-  //insert something into the column family
-  cf.insert('foo', {'bar':'baz'}, function(err){
     if(err){
-      throw(err);
+        throw(err);
     }
 
-    //get what we just put in
-    //the driver will return a helenus.Row object just like CQL
-    cf.get('foo', {consistency:helenus.ConsistencyLevel.ONE} function(err, row){
-      if(err){
-        throw(err);
-      }
+    //insert something into the column family
+    cf.insert('foo', {'bar':'baz'}, function(err){
+        if(err){
+            throw(err);
+        }
 
-      row.get('bar').value // => baz
+        //get what we just put in
+        //the driver will return a helenus.Row object just like CQL
+        cf.get('foo', {consistency:helenus.ConsistencyLevel.ONE} function(err, row){
+            if(err){
+                throw(err);
+            }
+
+            row.get('bar').value // => baz
+        });
     });
-  });
 });
 
 });
@@ -112,24 +109,24 @@ keyspace.get('my_cf', function(err, cf){
 
 Currently Helenus supports the following command for the thrift side of the driver:
 
-  * connection.createKeyspace
-  * connection.dropKeyspace
-  * keyspace.createColumnFamily
-  * keyspace.dropColumnFamily
-  * columnFamily.insert
-  * columnFamily.get
-  * columnFamily.getIndexed
-  * columnFamily.remove
-  * columnFamily.truncate
+    * connection.createKeyspace
+    * connection.dropKeyspace
+    * keyspace.createColumnFamily
+    * keyspace.dropColumnFamily
+    * columnFamily.insert
+    * columnFamily.get
+    * columnFamily.getIndexed
+    * columnFamily.remove
+    * columnFamily.truncate
 
 The following support is going to be added in later releases:
 
-  * columnFamily.rowCount
-  * columnFamily.columnCount
-  * columnfamily.increment
-  * SuperColumns
-  * CounterColumns
-  * Better composite support
+    * columnFamily.rowCount
+    * columnFamily.columnCount
+    * columnfamily.increment
+    * SuperColumns
+    * CounterColumns
+    * Better composite support
 
 ## Row
 
@@ -144,42 +141,42 @@ Returns the number of columns in the row
 
 This will return the column at index N
 
-    results.forEach(function(row){
-      //gets the 5th column of each row
-      console.log(row[5]);
-    });
+        results.forEach(function(row){
+            //gets the 5th column of each row
+            console.log(row[5]);
+        });
 
 ### row.get(name)
 
 This will return the column with a specific name
 
-    results.forEach(function(row){
-      //gets the column with the name 'foo' of each row
-      console.log(row.get('foo'));
-    });
+        results.forEach(function(row){
+            //gets the column with the name 'foo' of each row
+            console.log(row.get('foo'));
+        });
 
 ### row.forEach()
 
 This is wrapper function of Array.forEach which return name,value,ts,ttl of column from row as callback params.
 
-    results.forEach(function(row){
-      //all row of result
-      row.forEach(function(name,value,ts,ttl){
-        //all column of row
-        console.log(name,value,ts,ttl);
-      });
+        results.forEach(function(row){
+            //all row of result
+            row.forEach(function(name,value,ts,ttl){
+                //all column of row
+                console.log(name,value,ts,ttl);
+            });
 
-    });
+        });
 
 ### row.slice(start, finish)
 
 Slices columns in the row based on their numeric index, this allows you to get
 columns x through y, it returns a Helenus row object of columns that match the slice.
 
-    results.forEach(function(row){
-      //gets the first 5 columns of each row
-      console.log(row.slice(0,5));
-    });
+        results.forEach(function(row){
+            //gets the first 5 columns of each row
+            console.log(row.slice(0,5));
+        });
 
 ### row.nameSlice(start, finish)
 
@@ -189,8 +186,8 @@ that match the slice
 ```javascript
 results.forEach(function(row)
 {
-    // gets all columns that start with a, b, c, or d
-    console.log(row.nameSlice('a','e'));
+        // gets all columns that start with a, b, c, or d
+        console.log(row.nameSlice('a','e'));
 });
 ```
 
@@ -200,10 +197,10 @@ Columns are returned as objects with the following structure:
 
 ```javascript
 {
-    name: 'Foo',       //The column name
-    value: 'bar',      //The column value
-    timestamp: Date(), //The date object of the timestamp for the column
-    ttl: 123456        //The ttl (in milliseconds) for the columns
+        name: 'Foo',       //The column name
+        value: 'bar',      //The column value
+        timestamp: Date(), //The date object of the timestamp for the column
+        ttl: 123456        //The ttl (in milliseconds) for the columns
 }
 ```
 
