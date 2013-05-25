@@ -1,6 +1,6 @@
 {
-    "name": "scamandrios",
-    "version": "0.7.0",
+    "name":        "scamandrios",
+    "version":     "0.7.0",
     "description": "node.js bindings for Cassandra with a promises API",
     "keywords":
     [
@@ -22,23 +22,25 @@
     },
     "dependencies":
     {
-        "helenus-thrift": "0.7.3",
-        "node-uuid": "*",
-        "p-promise": "*",
-        "lodash": "*"
+        "helenus-thrift": "*",
+        "lodash":         "*",
+        "node-uuid":      "*",
+        "p-promise":      "*"
     },
     "devDependencies":
     {
-        "whiskey": "git://github.com/cloudkick/whiskey.git#b3c5bc23e30c95e46083bc7628c2557c1c15ec95",
-        "JSDoc": "git://github.com/jsdoc3/jsdoc.git",
+        "whiskey":           "git://github.com/cloudkick/whiskey.git#b3c5bc23e30c95e46083bc7628c2557c1c15ec95",
+        "JSDoc":             "git://github.com/jsdoc3/jsdoc.git",
+        "blanket":           "*",
+        "chai-as-promised":  "*",
+        "complexity-report": "*",
         "mocha-as-promised": "*",
-        "chai-as-promised": "*",
-        "travis-cov": "*",
-        "blanket": "*"
+        "travis-cov":        "*"
     },
     "scripts":
     {
-        "test": "make test",
+        "test":       "make test",
+        "complexity": "./node_modules/.bin/cr -l -w --maxcc 15 lib/",
         "blanket":
         {
             "pattern": "//^((?!\/node_modules|test|doc|examples\/).)*$/ig",
@@ -46,8 +48,8 @@
         },
         "travis-cov": { "threshold": 50 }
     },
-    "main": "index",
-    "engines": { "node": ">= 0.10" },
-    "license": "MIT",
+    "main":           "index",
+    "engines":        { "node": ">= 0.10" },
+    "license":        "MIT",
     "readmeFilename": "README.md"
 }
