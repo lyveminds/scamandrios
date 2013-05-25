@@ -90,7 +90,7 @@ describe('thrift', function()
             [
                 promise.should.be.fulfilled,
                 promise.should.eventually.be.an('array'),
-                promise.should.eventually.have.property('length', 1),
+                promise.should.eventually.have.property('length', system.hostPoolSize),
                 promise.then(function(value)
                 {
                     return (keySpace = value[0].value);
@@ -268,11 +268,17 @@ describe('thrift', function()
         it('standard cf.get for composite column family', function()
         {
             var key = ['åbcd', new scamandrios.UUID('e491d6ac-b124-4795-9ab3-c8a0cf92615c')],
-                promise = cfComposite.get(key).should.be.fulfilled;
-            return promise.should.eventually.be.an.instanceof(scamandrios.Row).then(function(row)
-            {
-                return row.get([12345678912345, new Date(1326400762701)]).value;
-            }).should.become('some value');
+                promise = cfComposite.get(key);
+
+            return P.all(
+            [
+                promise.should.be.fulfilled,
+                promise.should.eventually.be.an.instanceof(scamandrios.Row),
+                promise.then(function(row)
+                {
+                    return row.get([12345678912345, new Date(1326400762701)]).value;
+                }).should.become('some value')
+            ]);
         });
 
         it('standard cf.get with options', function()
