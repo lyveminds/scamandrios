@@ -49,12 +49,17 @@ describe('thrift', function()
         {
             system.keyspace = 'system';
             conn = new scamandrios.ConnectionPool(system);
-            var promise = conn.connect().should.be.fulfilled;
 
-            return promise.should.eventually.have.property('definition').then(function(keyspace)
-            {
-                return keyspace.definition.name;
-            }).should.become('system');
+            var promise = conn.connect();
+            return P.all(
+            [
+                promise.should.be.fulfilled,
+                promise.should.eventually.be.an.instanceof(scamandrios.Keyspace),
+                promise.then(function(keyspace)
+                {
+                    return keyspace.definition.name;
+                }).should.become('system')
+            ]);
         });
 
         it('bad pool connect', function()
