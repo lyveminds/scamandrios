@@ -13,4 +13,4 @@ before_install:
   - sudo service cassandra status
 
 script:
-  - make test
+  - npm test

@@ -39,14 +39,14 @@
     },
     "scripts":
     {
-        "test":       "make test",
+        "test":       "make test && make test-cov",
         "complexity": "./node_modules/.bin/cr -l -w --maxcc 15 lib/",
         "blanket":
         {
-            "pattern": "//^((?!\/node_modules|test|doc|examples\/).)*$/ig",
+            "pattern": "//^((?!\/node_modules|test|doc|examples|cassandra\/).)*$/ig",
             "onlyCwd": true
         },
-        "travis-cov": { "threshold": 50 }
+        "travis-cov": { "threshold": 75 }
     },
     "main":           "index",
     "engines":        { "node": ">= 0.10" },
