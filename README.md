@@ -4,6 +4,8 @@ A promises API for Cassandra, forked from [helenus](https://github.com/simplerea
 
 [![Build Status](https://secure.travis-ci.org/ceejbot/scamandrios.png)](http://travis-ci.org/ceejbot/scamandrios)
 
+[Code coverage report](test/coverage.html)
+
 To install:
 
 `npm install scamandrios`
