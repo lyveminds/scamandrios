@@ -59,6 +59,8 @@ describe('thrift', function()
 
         it('bad pool connect', function()
         {
+            this.timeout(3500);
+
             var badPool = new scamandrios.ConnectionPool(badSystem);
             badPool.on('error', function(error)
             {
