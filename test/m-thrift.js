@@ -421,7 +421,7 @@ describe('thrift', function()
         {
             var key = 'åbcd',
                 columns = ['1234'],
-                promise = cfComposite.get(key, { 'columns': columns });
+                promise = cfCounter.get(key, { 'columns': columns });
 
             return P.all(
             [
