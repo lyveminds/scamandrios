@@ -256,7 +256,7 @@ describe('thrift', function()
                 row.then(function(row)
                 {
                     var timeStamp = +new Date();
-                    return row.get('one').timestamp <= timeStamp && row.get('one').timeStamp >= timeStamp - 1000;
+                    return row.get('one').timestamp <= timeStamp && row.get('one').timestamp >= timeStamp - 1000;
                 }).should.eventually.be.ok,
                 row.then(function(row)
                 {
@@ -436,7 +436,7 @@ describe('thrift', function()
                 promise.should.be.rejected.with(Error),
                 promise.fail(_.identity).should.eventually.have.property('name', 'InvalidRequestException').then(function(error)
                 {
-                    return error.message;
+                    return error.why;
                 }).should.become('range finish must come after start in the order of traversal')
             ]);
         });
@@ -487,7 +487,7 @@ describe('thrift', function()
                 })
             ]).then(function(promises)
             {
-                return promises[2].value;
+                return promises[2];
             });
         }
 
@@ -643,9 +643,10 @@ describe('thrift', function()
             expect(row).to.have.property('key', config.standard_row_key);
             expect(row.get('one')).to.have.property('value', 'a');
             expect(row.get('four')).to.have.property('value', '');
+            done();
         });
 
-        it('`slice`', function()
+        it('`slice`', function(done)
         {
             var row = rowStandard.slice(1, 3);
             expect(row).to.be.an.instanceof(scamandrios.Row);
@@ -654,18 +655,20 @@ describe('thrift', function()
             expect(row).to.have.property('key', config.standard_row_key);
             expect(row.get('one')).to.have.property('value', 'a');
             expect(row.get('three')).to.have.property('value', 'c');
+            done();
         });
 
-        it('`toString` and `inspect`', function()
+        it('`toString` and `inspect`', function(done)
         {
             var string = String(rowStandard);
             expect(string).to.be.a('string');
             expect(string).to.equal("<Row: Key: 'standard_row_1', ColumnCount: 4, Columns: [ 'four,one,three,two' ]>");
+            done();
         });
 
-        it('`forEach`', function()
+        it('`forEach`', function(done)
         {
-            var index = 0;
+            var index = -1;
             var values =
             [
                 { 'name': 'four', 'value': '' },
@@ -675,11 +678,13 @@ describe('thrift', function()
             ];
             rowStandard.forEach(function(name, value, timeStamp, ttl)
             {
+                index++;
                 expect(values[index].name).to.equal(name);
                 expect(values[index].value).to.equal(value);
                 expect(timeStamp).to.be.an.instanceof(Date);
                 expect(ttl).to.be.null;
             });
+            done();
         });
     });
 
