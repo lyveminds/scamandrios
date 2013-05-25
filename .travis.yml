@@ -5,3 +5,9 @@ node_js:
 
 services:
   - cassandra
+
+before_script:
+  - until nc -z localhost 9160; do sleep 1; done
+
+script:
+  - make test

@@ -1,6 +1,6 @@
 # Scamandrios
 
-A promises API for Cassandra, forked from [scamandrios](https://github.com/simplereach/scamandrios). scamandrios was Cassandra's twin brother. He was also known as Scamandrios.
+A promises API for Cassandra, forked from [helenus](https://github.com/simplereach/helenus). Helenus was Cassandra's twin brother. He was also known as Scamandrios.
 
 [![Build Status](https://secure.travis-ci.org/ceejbot/scamandrios.png)](http://travis-ci.org/ceejbot/scamandrios)
 
