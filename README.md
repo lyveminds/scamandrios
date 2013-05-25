@@ -4,17 +4,13 @@ A promises API for Cassandra, forked from [helenus](https://github.com/simplerea
 
 [![Build Status](https://secure.travis-ci.org/ceejbot/scamandrios.png)](http://travis-ci.org/ceejbot/scamandrios)
 
-## Installation
+To install:
 
 `npm install scamandrios`
 
-The tests require cassandra to be running on `localhost:9160`.
+There is a set of unit tests run by mocha. The tests require cassandra to be running on `localhost:9160`.
 
-`make test`
-
-For coverage:
-
-`make test-cov`
+`make test && make test-cov`
 
 ## Usage
 
@@ -39,7 +35,7 @@ var pool = new scamandrios.ConnectionPool(
 
 Specify the `cqlVersion` parameter if you are using Cassandra 1.1 and want to use CQL 3.
 
-You can supply a function in the `getHost` parameter to override the random host selection that the pool will perform when handling a request. __NOTE:__ We intend to replace the pool implementation with one based on [poolee](https://github.com/dannycoates/poolee), so overriding will eventually be impossible as well as somethg you probably won't ever feel the need to do.
+You can supply a function in the `getHost` parameter to override the random host selection that the pool will perform when handling a request. __NOTE:__ We intend to replace the pool implementation with one based on [poolee](https://github.com/dannycoates/poolee), so overriding will eventually be impossible as well as something you probably won't ever feel the need to do.
 
 As with most error-emitting objects in node, if you do not listen for `error` it will bubble up to `process.uncaughtException`.
 
@@ -91,21 +87,21 @@ pool.connect.then(function(keyspace)
 
 Currently scamandrios supports the following command for the thrift side of the driver:
 
-* connection.createKeyspace
-* connection.dropKeyspace
-* keyspace.createColumnFamily
-* keyspace.dropColumnFamily
-* columnFamily.insert
-* columnFamily.get
-* columnFamily.getIndexed
-* columnFamily.remove
-* columnFamily.truncate
-* columnfamily.incr
+* `connection.createKeyspace()`
+* `connection.dropKeyspace()`
+* `keyspace.createColumnFamily()`
+* `keyspace.dropColumnFamily()`
+* `columnFamily.insert()`
+* `columnFamily.get()`
+* `columnFamily.getIndexed()`
+* `columnFamily.remove()`
+* `columnFamily.truncate()`
+* `columnfamily.incr()`
 
 The following support is going to be added in later releases:
 
-* columnFamily.rowCount
-* columnFamily.columnCount
+* `columnFamily.rowCount()`
+* `columnFamily.columnCount()`
 * SuperColumns
 * CounterColumns
 * Better composite support
@@ -113,7 +109,7 @@ The following support is going to be added in later releases:
 ## Row
 
 The scamandrios Row object acts like an array but contains some helper methods to
-make your life a bit easier when dealing with dynamic columns in Cassandra
+make your life a bit easier when dealing with dynamic columns in Cassandra.
 
 ### row.count
 
@@ -145,16 +141,19 @@ results.forEach(function(row)
 
 ### row.forEach()
 
-This is wrapper function of Array.forEach which return name,value,ts,ttl of column from row as callback params.
+This is a wrapper function for `Array.forEach()` that returns name, value, ts, ttl of each column in the row as callback params.
 
-        results.forEach(function(row){
-            //all row of result
-            row.forEach(function(name,value,ts,ttl){
-                //all column of row
-                console.log(name,value,ts,ttl);
-            });
-
-        });
+```javascript
+// for every row in a result
+results.forEach(function(row)
+{
+    // for every column in the row
+    row.forEach(function(name, value, ts, ttl)
+    {
+        console.log(name, value, ts, ttl);
+    });
+});
+```
 
 ### row.slice(start, finish)
 
