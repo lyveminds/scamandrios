@@ -1,6 +1,6 @@
 NPM_BIN := node_modules/.bin/
 MOCHA := $(addprefix $(NPM_BIN), mocha)
-TEST_FILES := $(addprefix test/, cql2.js cql3.js m-thrift.js)
+TEST_FILES := $(addprefix test/, cql2.js cql3.js thrift.js)
 
 test:
 	$(MOCHA) -R spec $(TEST_FILES)
