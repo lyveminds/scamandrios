@@ -689,14 +689,27 @@ describe('thrift', function()
                 { 'name': 'three', 'value': 'c' },
                 { 'name': 'two', 'value': 'b' }
             ];
+
             rowStandard.forEach(function(name, value, timeStamp, ttl)
             {
                 index++;
+                expect(arguments.length).to.equal(4);
                 expect(values[index].name).to.equal(name);
                 expect(values[index].value).to.equal(value);
                 expect(timeStamp).to.be.an.instanceof(Date);
                 expect(ttl).to.be.null;
             });
+
+            rowStandard.forEach(function(name, value, timeStamp, ttl, column)
+            {
+                var index = arguments[5],
+                    row = arguments[6];
+
+                expect(this).to.equal(rowStandard);
+                expect(arguments.length).to.equal(7);
+                expect(row).to.equal(rowStandard);
+                expect(row[index]).to.equal(rowStandard[index]);
+            }, rowStandard);
             done();
         });
     });
