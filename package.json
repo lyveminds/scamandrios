@@ -1,6 +1,6 @@
 {
     "name":        "scamandrios",
-    "version":     "0.7.0",
+    "version":     "0.1.0",
     "description": "node.js bindings for Cassandra with a promises API",
     "keywords":
     [
@@ -29,7 +29,6 @@
     },
     "devDependencies":
     {
-        "whiskey":           "git://github.com/cloudkick/whiskey.git#b3c5bc23e30c95e46083bc7628c2557c1c15ec95",
         "JSDoc":             "git://github.com/jsdoc3/jsdoc.git",
         "blanket":           "*",
         "chai-as-promised":  "*",
