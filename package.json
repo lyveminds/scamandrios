@@ -48,7 +48,7 @@
         "travis-cov": { "threshold": 75 }
     },
     "main":           "index",
-    "engines":        { "node": ">= 0.10" },
+    "engines":        { "node": ">= 0.8" },
     "license":        "MIT",
     "readmeFilename": "README.md"
 }
