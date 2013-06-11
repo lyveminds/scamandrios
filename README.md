@@ -2,13 +2,13 @@
 
 A promises API for Cassandra, forked from [helenus](https://github.com/simplereach/helenus). Helenus was Cassandra's twin brother. He was also known as Scamandrios.
 
-[![Build Status](https://secure.travis-ci.org/ceejbot/scamandrios.png)](http://travis-ci.org/ceejbot/scamandrios)
-
-[Code coverage report](test/coverage.html)
+[![Build Status](https://secure.travis-ci.org/blackpearlsystems/scamandrios.png)](http://travis-ci.org/blackpearlsystems/scamandrios) [![Dependenciess](https://david-dm.org/blackpearlsystems/scamandrios.png)](https://david-dm.org/blackpearlsystems/scamandrios)
 
 To install:
 
 `npm install scamandrios`
+
+(Not yet published on NPM! Will have a badge here when it is.)
 
 There is a set of unit tests run by mocha. The tests require cassandra to be running on `localhost:9160`.
 
