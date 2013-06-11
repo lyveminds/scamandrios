@@ -51,16 +51,55 @@ pool.on('error', function(err)
 All asynchronous operations return promises in lieu of taking callbacks. The promises library used is [P](https://github.com/rkatic/p), which is Promises/A+ spec compliant. Here's an example of making a CQL query:
 
 ```javascript
-pool.connect.then(function()
+pool.connect()
+.then(function()
 {
-    pool.cql('SELECT col FROM cf_one WHERE key = ?', ['key123']).then(function(result)
-    {
-        console.log(result);
-    });
+    return pool.cql('SELECT col FROM cf_one WHERE key = ?', ['key123']);
 })
+.then(function(result)
+{
+    console.log(result);
+})
+.fail(function(err)
+{
+    console.log(err);
+}).done();
 ```
 
 The first argument to `cql()` is the query string. The second is an array of items to interpolate into the query string, which is accomplished using [util.format()](http://nodejs.org/docs/latest/api/util.html#util.format). The result is an array of Row objects. You can always skip quotes around placeholders. Quotes are added automatically. In CQL3 you cannot use placeholders for ColumnFamily or Column names.
+
+### Conveniences
+
+#### connection.assignKeyspace(keyspaceName)
+
+
+`assignKeyspace` creates the named keyspace if it doesn't exist and then calls `connection.use` on the keyspace. It is safe to call more than once on a connection object. We use it in the following pattern. Suppose we have an object holding onto a connection to a cassandra instance. We want to make sure that this connection is set up & pointing to the right keyspace before we use it.
+
+
+```javascript
+var self = this;
+
+this.withKeyspace = this.connection.connect().then(function()
+{
+    return self.connection.assignKeyspace('my_keyspace');
+});
+
+```
+
+This promise turns into a value for the keyspace. You can then preceed other function calls with `obj.withKeyspace.then()`. For instance, 
+
+```javascript
+obj.withKeyspace('foo')
+.then(function() { return obj.connection.cql('SELECT * FROM ? ', [obj.colfamily1]); })
+.then(function(rows)
+{
+    // do something with rows;
+}).done();
+```
+
+#### keyspace.createTableAs(tableName, propertyToStoreAs, createOptions)
+
+[DOCS TBD]
 
 ### Thrift
 
@@ -69,20 +108,25 @@ If you do not want to use CQL, you can make calls using the thrift driver
 ```javascript
 pool.connect.then(function(keyspace)
 {
-    keyspace.get('my_cf').then(function(cf)
-    {
-        cf.insert('foo', { bar: 'baz'}).then(function()
-        {
-            cf.get('foo', { consistency: scamandrios.ConsistencyLevel.ONE }).then(function(row)
-            {
-                console.log(row.get('bar').value);
-            }, function(err)
-            {
-                // handle any errors for the entire chain
-            });
-        });
-    });
-});
+    return keyspace.get('my_cf');
+})
+.then(function(cf)
+{
+    return cf.insert('foo', { bar: 'baz'});
+})
+.then(function()
+{
+    return cf.get('foo', { consistency: scamandrios.ConsistencyLevel.ONE });
+})
+.then(function(row)
+{
+    console.log(row.get('bar').value);
+})
+.fail(function(err)
+{
+    // handle any error for the entire chain
+})
+.done();
 ```
 
 ### Thrift Support
@@ -162,10 +206,13 @@ results.forEach(function(row)
 Slices columns in the row based on their numeric index, this allows you to get
 columns x through y, it returns a scamandrios row object of columns that match the slice.
 
-        results.forEach(function(row){
-            //gets the first 5 columns of each row
-            console.log(row.slice(0,5));
-        });
+```javascript
+results.forEach(function(row)
+{
+    var firstFive = row.slice(0, 5);
+    console.log(firstFive);
+});
+```
 
 ### row.nameSlice(start, finish)
 
