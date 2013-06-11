@@ -1,6 +1,6 @@
 # Scamandrios
 
-A promises API for Cassandra, forked from [helenus](https://github.com/simplereach/helenus). Helenus was Cassandra's twin brother. He was also known as Scamandrios.
+A promises API for Cassandra, forked from [helenus](https://github.com/simplereach/helenus). Helenus was Cassandra's twin brother. He was also known as Scamandrios. Like Cassandra, his prophecies were correct, but unlike her he was believed. 
 
 [![Build Status](https://secure.travis-ci.org/blackpearlsystems/scamandrios.png)](http://travis-ci.org/blackpearlsystems/scamandrios) [![Dependenciess](https://david-dm.org/blackpearlsystems/scamandrios.png)](https://david-dm.org/blackpearlsystems/scamandrios)
 
@@ -8,11 +8,11 @@ To install:
 
 `npm install scamandrios`
 
-(Not yet published on NPM! Will have a badge here when it is.)
-
-There is a set of unit tests run by mocha. The tests require cassandra to be running on `localhost:9160`.
+There is a set of integration tests run by mocha. The tests require cassandra to be running on `localhost:9160`. To run them:
 
 `make test && make test-cov`
+
+`make coverage` will generate a full code coverage report in `tests/coverage.html`.
 
 ## Usage
 
@@ -89,7 +89,7 @@ this.withKeyspace = this.connection.connect().then(function()
 This promise turns into a value for the keyspace. You can then preceed other function calls with `obj.withKeyspace.then()`. For instance, 
 
 ```javascript
-obj.withKeyspace('foo')
+obj.withKeyspace
 .then(function() { return obj.connection.cql('SELECT * FROM ? ', [obj.colfamily1]); })
 .then(function(rows)
 {
@@ -99,7 +99,7 @@ obj.withKeyspace('foo')
 
 #### keyspace.createTableAs(tableName, propertyToStoreAs, createOptions)
 
-[DOCS TBD]
+Sugar for fetching a column family/table object, creating it if necessary. Caches the column family directly on the keyspace object as `propertyToStoreAs`.
 
 ### Thrift
 
