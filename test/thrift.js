@@ -214,6 +214,62 @@ describe('thrift', function()
             var promise = keySpace.get(config.cf_invalid);
             return promise.should.be.rejected.with(Error, /ColumnFamily cf_invalid_test Not Found/);
         });
+
+        it('keyspace.withTables is a promise for an object containing tables', function(done)
+        {
+            assert.ok(keySpace.withTables);
+            keySpace.withTables.should.be.an('object');
+            keySpace.withTables.should.have.property('then');
+            keySpace.withTables.then.should.be.a('function');
+
+            keySpace.withTables.then(function(result)
+            {
+                result.should.be.an('object');
+                done();
+            });
+        });
+
+        it('createTableAs() creates a missing table if necessary', function(done)
+        {
+            keySpace.createTableAs('promises', 'promises_test', {
+                key: 'promise',
+                description: 'test table',
+                columns: [{ name: 'violations',      validation_class: 'LongType'  }]
+            }).then(function(table)
+            {
+                table.should.be.ok;
+                table.should.have.property('definition');
+                table.definition.name.should.equal('promises');
+                keySpace.should.have.property('promises_test');
+                done();
+            }).done();
+        });
+
+        it('createTableAs() does not attempt to create existing tables', function(done)
+        {
+            keySpace.createTableAs('promises', 'promises_test', {
+                key: 'different',
+                description: 'test table 2',
+                columns: [{ name: 'fulfillments',      validation_class: 'LongType'  }]
+            }).then(function(table)
+            {
+                table.should.be.ok;
+                table.definition.name.should.equal('promises');
+                keySpace.promises_test.definition.name.should.equal('promises');
+                done();
+            }).done();
+        });
+
+        it('getTableAs() returns a table object', function(done)
+        {
+            keySpace.getTableAs('promises', 'promises_test').then(function(t)
+            {
+                t.should.be.an('object');
+                t.definition.name.should.equal('promises');
+                done();
+            }).done();
+        });
+
     });
 
     describe('column family gets/inserts', function()
