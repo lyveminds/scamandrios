@@ -500,6 +500,12 @@ describe('cql3', function()
             return promise.should.be.fulfilled;
         });
 
+        it('can create a column family containing a set', function()
+        {
+            var promise = conn.cql(config['collections_create_cf2#cql']);
+            return promise.should.be.fulfilled;
+        });
+
         it('can update 1', function()
         {
             var promise = conn.cql(config['collections_update#cql'], config['collections_update#vals1']);
@@ -510,6 +516,34 @@ describe('cql3', function()
         {
             var promise = conn.cql(config['collections_update#cql'], config['collections_update#vals2']);
             return promise.should.be.fulfilled;
+        });
+
+        it('can update a column containing a set', function()
+        {
+            var promise = conn.cql(config['collections_update2#cql']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can deserialize sets', function()
+        {
+            var promise = conn.cql(config['collections_select3#cql']);
+
+            return P.all(
+            [
+                promise.should.be.fulfilled,
+                promise.then(function(rows)
+                {
+                    var eachRow = _.map(rows, function(row)
+                    {
+                        var name = row.get('name'),
+                            lucky = row.get('lucky');
+
+                        return _.pluck([name, lucky], 'value');
+                    });
+
+                    return eachRow;
+                }).should.become([['Moe', [13, 27, 34]]])
+            ]);
         });
 
         it('can select rows containing maps and lists', function()
