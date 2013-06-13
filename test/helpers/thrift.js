@@ -25,7 +25,10 @@ module.exports = {
       { "name" : "date-test", "validation_class" : "DateType" },
       { "name" : "boolean-test", "validation_class" : "BooleanType" },
       { "name" : "uuid-test", "validation_class" : "UUIDType" },
-      { "name" : "index-test", "validation_class" : "UTF8Type", "index_type":0 }
+      { "name" : "index-test", "validation_class" : "UTF8Type", "index_type":0 },
+      { "name" : "map-test", "validation_class" : "MapType(UTF8Type, UTF8Type)" },
+      { "name" : "set-test", "validation_class": "SetType(UTF8Type)" },
+      { "name" : "list-test", "validation_class": "ListType(UTF8Type)" }
     ]
   },
   "cf_standard_composite_options"   : {
