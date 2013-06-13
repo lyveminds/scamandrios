@@ -32,20 +32,18 @@
         "JSDoc":             "git://github.com/jsdoc3/jsdoc.git",
         "blanket":           "*",
         "chai-as-promised":  "*",
-        "complexity-report": "*",
         "mocha-as-promised": "*",
         "travis-cov":        "*"
     },
     "scripts":
     {
         "test":       "make test && make test-cov",
-        "complexity": "./node_modules/.bin/cr -l -w --maxcc 15 lib/",
         "blanket":
         {
             "pattern": "//^((?!\/node_modules|test|doc|examples|cassandra\/).)*$/ig",
             "onlyCwd": true
         },
-        "travis-cov": { "threshold": 75 }
+        "travis-cov": { "threshold": 85 }
     },
     "main":           "index",
     "engines":        { "node": ">= 0.8" },
