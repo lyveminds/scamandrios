@@ -492,6 +492,73 @@ describe('cql3', function()
         });
     });
 
+    describe('collections', function()
+    {
+        it('can create column family', function()
+        {
+            var promise = conn.cql(config['collections_create_cf#cql']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can update 1', function()
+        {
+            var promise = conn.cql(config['collections_update#cql'], config['collections_update#vals1']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can update 2', function()
+        {
+            var promise = conn.cql(config['collections_update#cql'], config['collections_update#vals2']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can select rows containing maps and lists', function()
+        {
+            var promise = conn.cql(config['collections_select1#cql']);
+
+            return P.all(
+            [
+                promise.should.be.fulfilled,
+                promise.then(function(rows)
+                {
+                    var eachRow = _.map(rows, function(row)
+                    {
+                        var name = row.get('name'),
+                            services = row.get('services'),
+                            activities = row.get('activities');
+
+                        return _.pluck([name, services, activities], 'value');
+                    });
+
+                    return eachRow;
+                }).should.become([config['collections_update#vals1']])
+            ]);
+        });
+
+        it('can select rows with sets that contain a different number of elements', function()
+        {
+            var promise = conn.cql(config['collections_select2#cql']);
+
+            return P.all(
+            [
+                promise.should.be.fulfilled,
+                promise.then(function(rows)
+                {
+                    var eachRow = _.map(rows, function(row)
+                    {
+                        var name = row.get('name'),
+                            services = row.get('services'),
+                            activities = row.get('activities');
+
+                        return _.pluck([name, services, activities], 'value');
+                    });
+
+                    return eachRow;
+                }).should.become([config['collections_update#vals2']])
+            ]);
+        });
+    });
+
     describe('dropping keyspaces', function()
     {
         it('can drop keyspace', function()
