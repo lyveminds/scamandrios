@@ -244,7 +244,7 @@ describe('CQL 2', function ()
             expect(function ()
             {
                 pool.cql(commands['select2#cql'], [1, 2, 3, 4, 5, 6]);
-            }).to.throw(/Too Many Parameters Given/);
+            }).to.throw(/too many parameters provided for query format string/);
         });
 
         it('throws if too few CQL parameters are given', function ()
@@ -252,7 +252,7 @@ describe('CQL 2', function ()
             expect(function ()
             {
                 pool.cql(commands['select2#cql'], []);
-            }).to.throw(/Too Few Parameters Given/);
+            }).to.throw(/not enough parameters given to satisfy query format string/);
         });
 
         after(function ()
