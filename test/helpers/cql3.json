@@ -52,7 +52,7 @@
   "integers_select3#cql"      : "SELECT * FROM integers where number = -2",
 
   "collections_create_cf#cql"  : "CREATE TABLE collections (name text, services map<text, text>, activities list<text>, PRIMARY KEY (name))",
-  "collections_create_cf2#cql" : "CREATE TABLE sets (name text, lucky set<int>, PRIMARY KEY (name))",
+  "collections_create_cf2#cql" : "CREATE TABLE sets (name text, lucky set<int>, actors set<text>, PRIMARY KEY (name))",
   "collections_update#cql"     : "INSERT INTO collections (name, services, activities) VALUES (?, ?, ?)",
   "collections_update2#cql"    : "INSERT INTO sets (name, lucky) VALUES ('Moe', {13, 27, 34})",
   "collections_update#vals1"   : ["Kit", { "GitHub": "@kitcambridge", "Twitter": "@kitcambridge"}, ["running", "programming"]],
