@@ -546,6 +546,12 @@ describe('cql3', function()
             ]);
         });
 
+        it('can insert into set<text> column', function()
+        {
+            var promise = conn.cql("INSERT INTO sets (name, actors) VALUES ('Moe', {'Moe Howard', 'Chris Diamantopoulos'})");
+            return promise.should.be.fulfilled;
+        });
+
         it('can select rows containing maps and lists', function()
         {
             var promise = conn.cql(config['collections_select1#cql']);

@@ -544,6 +544,10 @@ describe('thrift', function()
             var promise = cfStandard.insert(qualifiedRow, options).then(function()
             {
                 return cfStandard.get(qualifiedRow);
+            }).fail(function(e)
+            {
+                console.log('INS', e.stack);
+                throw e;
             });
 
             return P.all(
@@ -559,6 +563,25 @@ describe('thrift', function()
                 return promises[2];
             });
         }
+
+        it('cf.get can get Map', function()
+        {
+            var value = { 'extra': 'fancy', 'things': 'here' };
+            return insertType('map', value).should.become(value);
+        });
+
+        it('cf.get can insert/get Set'); /*, function()
+        {
+            var value = ['a', 'b', 'c'];
+            return insertType('set', value).should.become(value);
+        });
+*/
+
+        it('cf.get can get List', function()
+        {
+            var names = ['Kit', 'C J', 'Kip'];
+            return insertType('list', names).should.become(names);
+        });
 
         it('cf.get can get BytesType', function()
         {
