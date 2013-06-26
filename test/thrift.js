@@ -16,8 +16,10 @@ chai.should();
 chai.use(chaiAsPromised);
 
 var config = require('./helpers/thrift'),
-    system = require('./helpers/connection'),
+    system = _.clone(require('./helpers/connection')),
     badSystem = require('./helpers/bad_connection');
+
+system.hostPoolSize = 5;
 
 describe('thrift', function()
 {
@@ -84,24 +86,41 @@ describe('thrift', function()
             }).should.be.fulfilled;
         });
 
-        it('pool.createKeyspace', function()
+        it('pool.assignKeyspace should create nonexistent keyspaces', function()
         {
-            var promise = conn.createKeyspace(config.keyspace);
-            return promise.should.be.fulfilled;
-        });
-
-        it('pool.use', function()
-        {
-            var promise = conn.use(config.keyspace);
+            var promise = conn.assignKeyspace(config.keyspace);
             return P.all(
             [
                 promise.should.be.fulfilled,
-                promise.should.eventually.be.an('array'),
-                promise.should.eventually.have.property('length', system.hostPoolSize),
-                promise.then(function(value)
+                promise.then(function(responses)
                 {
-                    return (keySpace = value[0].value);
+                    return Array.isArray(responses) &&
+                           responses.length == system.hostPoolSize &&
+                           _.every(responses, { 'state': 'fulfilled' });
+                }).should.become(true),
+                promise.then(function(responses)
+                {
+                    return (keySpace = responses[0].value);
                 }).should.eventually.be.an.instanceof(scamandrios.Keyspace)
+            ]);
+        });
+
+        it('pool.assignKeyspace should use existing keyspaces', function()
+        {
+            var promise = conn.assignKeyspace(config.keyspace);
+            return P.all(
+            [
+                promise.should.be.fulfilled,
+                promise.then(function(responses)
+                {
+                    return Array.isArray(responses) &&
+                           responses.length == system.hostPoolSize &&
+                           _.every(responses, { 'state': 'fulfilled' });
+                }).should.become(true),
+                promise.then(function(responses)
+                {
+                    return responses[0].value;
+                }).should.become(keySpace)
             ]);
         });
     });
