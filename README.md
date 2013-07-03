@@ -30,12 +30,12 @@ var pool = new scamandrios.ConnectionPool(
         user       : 'test',
         password   : 'test1233',
         timeout    : 3000
-        cqlVersion : '3.0.0', // optional
+        cqlVersion : '3.0.0', // default
         getHost    : getHostFunc, // optional
 });
 ```
 
-Specify the `cqlVersion` parameter if you are using Cassandra 1.1 and want to use CQL 3.
+Specify the `cqlVersion` parameter if you do not wish to use CQL 3.0.
 
 You can supply a function in the `getHost` parameter to override the random host selection that the pool will perform when handling a request. __NOTE:__ We intend to replace the pool implementation with one based on [poolee](https://github.com/dannycoates/poolee), so overriding will eventually be impossible as well as something you probably won't ever feel the need to do.
 
@@ -56,9 +56,17 @@ pool.connect()
 {
     return pool.cql('SELECT col FROM cf_one WHERE key = ?', ['key123']);
 })
-.then(function(result)
+.then(function(results)
 {
-    console.log(result);
+    // results can be iterated to get rows
+    results.forEach(function(row)
+    {
+        // rows can be iterated to get column contents
+        row.forEach(function(name, value, timestamp, ttl)
+        {
+            console.log(name, value, timestamp, ttl);
+        });
+    });
 })
 .fail(function(err)
 {
@@ -144,13 +152,7 @@ Currently scamandrios supports the following command for the thrift side of the 
 * `columnFamily.truncate()`
 * `columnfamily.incr()`
 
-The following support is going to be added in later releases:
-
-* `columnFamily.rowCount()`
-* `columnFamily.columnCount()`
-* SuperColumns
-* CounterColumns
-* Better composite support
+The focus of this fork of the driver is CQL 3.0 and its data structures. No further Thrift support is planned.
 
 ## Row
 
