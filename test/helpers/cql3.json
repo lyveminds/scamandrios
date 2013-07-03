@@ -51,6 +51,10 @@
   "integers_select2#cql"      : "SELECT * FROM integers where number = -1",
   "integers_select3#cql"      : "SELECT * FROM integers where number = -2",
 
+  "dates_create_cf" : "CREATE TABLE date_tests (key int, created timestamp, modified timestamp, PRIMARY KEY(key))",
+  "dates_insert": "INSERT INTO date_tests (key, created, modified) VALUES(?, ?, ?)",
+  "dates_select": "SELECT * FROM date_tests WHERE key = ?",
+
   "collections_create_cf#cql"  : "CREATE TABLE collections (name text, services map<text, text>, activities list<text>, PRIMARY KEY (name))",
   "collections_create_cf2#cql" : "CREATE TABLE sets (name text, lucky set<int>, actors set<text>, PRIMARY KEY (name))",
   "collections_update#cql"     : "INSERT INTO collections (name, services, activities) VALUES (?, ?, ?)",

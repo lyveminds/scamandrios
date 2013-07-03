@@ -492,6 +492,47 @@ describe('cql3', function()
         });
     });
 
+    describe('timestamps', function()
+    {
+        it('can serialize & deserialize javascript date objects', function(done)
+        {
+            var now = new Date();
+            var then = new Date(2008, 10, 12);
+
+            conn.cql(config.dates_create_cf)
+            .then(function(result)
+            {
+                return conn.cql(config.dates_insert, [1, then, now]);
+            })
+            .then(function(result)
+            {
+                return conn.cql(config.dates_select, [1]);
+            })
+            .then(function(results)
+            {
+                results.length.should.equal(1);
+                var row = results[0];
+
+                var created = row.get('created').value;
+                var modified = row.get('modified').value;
+
+                created.should.be.a('date');
+                modified.should.be.a('date');
+
+                assert.equal(then.getTime(), created.getTime());
+                assert.equal(now.getTime(), modified.getTime());
+
+                done();
+            })
+            .fail(function(err)
+            {
+                console.log(err);
+                should.not.exist(err);
+            })
+            .done();
+        });
+    });
+
     describe('collections', function()
     {
         it('can create column family', function()
