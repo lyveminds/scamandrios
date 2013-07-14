@@ -426,6 +426,82 @@ describe('cql3', function()
 
     });
 
+    describe('uuids', function()
+    {
+        it('can create column family', function()
+        {
+            var promise = conn.cql(config['uuid_create_cf#cql']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can update 1', function()
+        {
+            var promise = conn.cql(config['uuid_update#cql'], config['uuid_update#vals1']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can update 2', function()
+        {
+            var promise = conn.cql(config['uuid_update#cql'], config['uuid_update#vals2']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can update 3', function()
+        {
+            var promise = conn.cql(config['uuid_update#cql'], config['uuid_update#vals3']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can update 4', function()
+        {
+            var promise = conn.cql(config['uuid_update#cql'], config['uuid_update#vals4']);
+            return promise.should.be.fulfilled;
+        });
+
+        it('can select by UUID', function()
+        {
+            return P.all(
+            [
+                conn.cql(config['uuid_select1#cql']),
+                conn.cql(config['uuid_select2#cql']),
+                conn.cql(config['uuid_select3#cql']),
+                conn.cql(config['uuid_select4#cql'])
+            ])
+            .should.be.fulfilled
+            .then(function(results)
+            {
+                var columns = _.reduce(results, function(memo, result)
+                {
+                    return memo.concat(_.map(result, function(row)
+                    {
+                        return { 'v1': row.get('v1').value, 'v4': row.get('v4').value };
+                    }));
+                }, []);
+
+                return _.isEqual(columns,
+                [
+                    {
+                        'v4': new scamandrios.UUID('f7c563bb-3414-4e87-a719-a08be67eba24'),
+                        'v1': new scamandrios.TimeUUID('44071c10-ec58-11e2-8dfa-6f0e4ebf00b7')
+                    },
+
+                    {
+                        'v4': new scamandrios.UUID('2942c3c6-2096-48b4-b005-bb922de819e7'),
+                        'v1': new scamandrios.TimeUUID('4d18e310-ec58-11e2-8dfa-6f0e4ebf00b7')
+                    },
+                    {
+                        'v4': new scamandrios.UUID('c6d5f879-658d-4a3e-8bab-ce825c792c7e'),
+                        'v1': new scamandrios.TimeUUID('52789e90-ec58-11e2-8dfa-6f0e4ebf00b7')
+                    },
+                    {
+                        'v4': new scamandrios.UUID('b2668afb-788a-4a61-90da-863d21fdb73d'),
+                        'v1': new scamandrios.TimeUUID('58fc1990-ec58-11e2-8dfa-6f0e4ebf00b7')
+                    }
+                ]);
+            }).should.become(true)
+        });
+    });
+
     describe('integers', function()
     {
         it('can create column family', function()

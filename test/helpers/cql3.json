@@ -42,6 +42,17 @@
   "sparse_select1#cql"   : "SELECT posted_at, body, posted_by FROM timeline WHERE userid = 10 AND posted_at > '2012-03-01 00:00:00+0000'",
   "sparse_select2#cql"   : "SELECT body, posted_by FROM timeline WHERE userid = 10 AND posted_at = '2012-03-01 00:00:00+0000'",
 
+  "uuid_create_cf#cql"        : "CREATE TABLE uuids (v4 uuid, v1 timeuuid, PRIMARY KEY(v4))",
+  "uuid_update#cql"           : "INSERT INTO uuids (v4, v1) VALUES (?, ?)",
+  "uuid_update#vals1"         : ["f7c563bb-3414-4e87-a719-a08be67eba24", "44071c10-ec58-11e2-8dfa-6f0e4ebf00b7"],
+  "uuid_update#vals2"         : ["2942c3c6-2096-48b4-b005-bb922de819e7", "4d18e310-ec58-11e2-8dfa-6f0e4ebf00b7"],
+  "uuid_update#vals3"         : ["c6d5f879-658d-4a3e-8bab-ce825c792c7e", "52789e90-ec58-11e2-8dfa-6f0e4ebf00b7"],
+  "uuid_update#vals4"         : ["b2668afb-788a-4a61-90da-863d21fdb73d", "58fc1990-ec58-11e2-8dfa-6f0e4ebf00b7"],
+  "uuid_select1#cql"          : "SELECT * FROM uuids WHERE v4 = f7c563bb-3414-4e87-a719-a08be67eba24",
+  "uuid_select2#cql"          : "SELECT * FROM uuids WHERE v4 = 2942c3c6-2096-48b4-b005-bb922de819e7",
+  "uuid_select3#cql"          : "SELECT * FROM uuids WHERE v4 = c6d5f879-658d-4a3e-8bab-ce825c792c7e",
+  "uuid_select4#cql"          : "SELECT * FROM uuids WHERE v4 = b2668afb-788a-4a61-90da-863d21fdb73d",
+  
   "integers_create_cf#cql"    : "CREATE TABLE integers (number int, longnumber bigint, varnumber varint, PRIMARY KEY (number))",
   "integers_update#cql"       : "UPDATE integers set longnumber = ?, varnumber = ? where number = ?",
   "integers_update#vals1"     : [25, 36, 1],
