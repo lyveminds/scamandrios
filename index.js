@@ -1,6 +1,8 @@
 module.exports =
 {
     version          : require('./package').version,
+    helpers          : require('./lib/helpers'),
+
     ConnectionPool   : require('./lib/pool'),
     Connection       : require('./lib/connection'),
     Keyspace         : require('./lib/keyspace'),
