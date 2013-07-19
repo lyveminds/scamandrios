@@ -25,7 +25,8 @@
         "helenus-thrift": "*",
         "lodash":         "*",
         "node-uuid":      "*",
-        "p-promise":      "*"
+        "p-promise":      "*",
+        "semver":         "*"
     },
     "devDependencies":
     {
