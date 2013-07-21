@@ -1,0 +1,15 @@
+mocha = './node_modules/.bin/mocha'
+test_files = 'test/cql2.js test/cql3.js test/thrift.js test/units.js'
+
+task 'test', description: 'run unit tests', watch: 'lib/**/*', run: (options) ->
+	display = options.display or 'spec'
+	timeout = options.timeout or 5000
+	exec "#{mocha} -t #{timeout} -R #{display} --colors #{test_files}"
+
+task 'test-cov', description: 'code coverage percentage', run: (options) ->
+	timeout = options.timeout or 5000
+	exec "#{mocha} --require blanket -R travis-cov -t #{timeout} #{test_files}"
+
+task 'coverage', description: 'code coverage percentage', run: (options) ->
+	timeout = options.timeout or 5000
+	exec "#{mocha} --require blanket -R html-cov -t #{timeout} #{test_files} > test/coverage.html"

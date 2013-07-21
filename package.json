@@ -29,6 +29,7 @@
     },
     "devDependencies":
     {
+        "plz":               "*",
         "JSDoc":             "git://github.com/jsdoc3/jsdoc.git",
         "blanket":           "*",
         "chai-as-promised":  "*",
@@ -37,7 +38,7 @@
     },
     "scripts":
     {
-        "test":       "make test && make test-cov",
+        "test":       "./node_modules/.bin/plz display=dot test && ./node_modules/.bin/plz test-cov",
         "blanket":
         {
             "pattern": "//^((?!\/node_modules|test|doc|examples|cassandra\/).)*$/ig",
