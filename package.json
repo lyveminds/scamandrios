@@ -25,12 +25,12 @@
         "helenus-thrift": "*",
         "lodash":         "*",
         "node-uuid":      "*",
-        "p-promise":      "*"
+        "p-promise":      "*",
+        "semver":         "*"
     },
     "devDependencies":
     {
         "plz":               "*",
-        "JSDoc":             "git://github.com/jsdoc3/jsdoc.git",
         "blanket":           "*",
         "chai-as-promised":  "*",
         "mocha-as-promised": "*",
