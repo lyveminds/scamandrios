@@ -76,6 +76,67 @@ pool.connect()
 
 The first argument to `cql()` is the query string. The second is an array of items to interpolate into the query string, which is accomplished using [util.format()](http://nodejs.org/docs/latest/api/util.html#util.format). The result is an array of Row objects. You can always skip quotes around placeholders. Quotes are added automatically. In CQL3 you cannot use placeholders for ColumnFamily or Column names.
 
+### CQL3 queries
+
+CQL can express a set of types more specific than javascript's types. To javascript, a Cassandra `set<text>` and a `list<text>` both look like arrays. We found it helpful to have a query-contruction API that accepted type hints, so sets and lists could be interpolated properly into query strings.
+
+The `scamandrios.Query` constructor exists to help you do this. Here's a somewhat contrived example:
+
+```javascript
+var scamandrios = require('scamandrios');
+
+var conn = new scamandrios.Connection();
+
+var query = new scamandrios.Query('INSERT INTO {table} ({key_col}, {name_col}, {email_col}) VALUES ({key}, {name}, {emails})')
+    .types(
+    {
+        key: 'uuid',
+        name: 'text',
+        emails: 'map<text, boolean>'
+    })
+    .params(
+    {
+        table: 'users',
+        key_col: 'uid',
+        email_col: 'emails',
+        key: '271B6C60-A22D-4D0E-8171-0D344784217E',
+        name: 'Mortimer Q. Snerd',
+        emails:
+        {
+            'mortimer@example.com': true,
+            'msnerd@hotmail.example.com': false
+        }
+    });
+
+query.execute(conn);
+```
+
+#### new Query(str)
+
+Takes a query string and returns a query object.
+
+Think of the query string as being like a handlebars template object. Variables are mentioned inside curly braces: 
+
+    `SELECT * FROM {table} WHERE {keycolumn} = {keyvalue}` 
+
+There are three variables in that cql statement that need to be interpolated correctly: `table`, `keycolumn`, and `keyvalue`.
+
+#### query.params(obj)
+
+Builds a dictionary in the query object mapping named parameters to their values. Can be called repeatedly to add fields to the dictionary.
+
+Returns the query object so the function can be chained.
+
+#### query.types(obj)
+
+Builds a dictionary in the query object mapping named parameters to their types. Can be called repeatedly to add fields to the dictionary. *Types not appearing in this mapping are presumed to be Cassandra identifiers.* That is, values that do not need to be quoted or escaped in any way.
+
+Returns the query object so the function can be chained.
+
+#### query.execute(connection)
+
+Interpolate variables into the query string & execute the query. Takes a connection or connection pool parameter. Returns a promise that resolves to the result of the query.
+
 ### Conveniences
 
 #### connection.assignKeyspace(keyspaceName)
