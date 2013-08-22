@@ -1,5 +1,5 @@
 mocha = './node_modules/.bin/mocha'
-test_files = 'test/cql2.js test/cql3.js test/query.js test/thrift.js test/units.js'
+test_files = 'test/cql2.js test/cql3.js test/query.js test/thrift.js test/units.js test/lifespan.js'
 
 task 'test', description: 'run unit tests', watch: 'lib/**/*', run: (options) ->
 	display = options.display or 'spec'
