@@ -22,7 +22,7 @@
     },
     "dependencies":
     {
-        "helenus-thrift": "git@github.com:blackpearlsystems/node-thrift.git",
+        "helenus-thrift": "git://github.com/blackpearlsystems/node-thrift.git",
         "lodash":         "*",
         "node-uuid":      "*",
         "p-promise":      "*",
