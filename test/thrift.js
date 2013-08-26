@@ -105,23 +105,22 @@ describe('thrift', function()
             ]);
         });
 
-        it('pool.assignKeyspace should use existing keyspaces', function()
+        it('pool.assignKeyspace should use existing keyspaces', function(done)
         {
-            var promise = conn.assignKeyspace(config.keyspace);
-            return P.all(
-            [
-                promise.should.be.fulfilled,
-                promise.then(function(responses)
-                {
-                    return Array.isArray(responses) &&
-                           responses.length == system.hostPoolSize &&
-                           _.every(responses, { 'state': 'fulfilled' });
-                }).should.become(true),
-                promise.then(function(responses)
-                {
-                    return responses[0].value;
-                }).should.become(keySpace)
-            ]);
+            conn.assignKeyspace(config.keyspace)
+            .then(function(responses)
+            {
+                assert.ok(Array.isArray(responses));
+                assert.equal(responses.length, system.hostPoolSize);
+
+                var ks = responses[0].value;
+                assert.deepEqual(ks, keySpace);
+                done();
+            })
+            .fail(function(err)
+            {
+               should.not.exist(err);
+            }).done();
         });
     });
 

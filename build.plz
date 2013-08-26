@@ -10,6 +10,11 @@ task 'test-cov', description: 'code coverage percentage', run: (options) ->
 	timeout = options.timeout or 5000
 	exec "#{mocha} --require blanket -R travis-cov -t #{timeout} #{test_files}"
 
+task 'test-nothrift', description: 'run unit tests but skip the thrift tests', watch: 'lib/**/*', run: (options) ->
+    display = options.display or 'spec'
+    timeout = options.timeout or 5000
+    exec "#{mocha} -t #{timeout} -R #{display} --colors test/cql2.js test/cql3.js test/query.js test/units.js test/lifespan.js"
+
 task 'coverage', description: 'code coverage percentage', run: (options) ->
 	timeout = options.timeout or 5000
 	exec "#{mocha} --require blanket -R html-cov -t #{timeout} #{test_files} > test/coverage.html"

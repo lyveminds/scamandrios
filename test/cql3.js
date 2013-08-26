@@ -17,7 +17,7 @@ chai.use(chaiAsPromised);
 
 var
     badConfig = require('./helpers/bad_connection'),
-    poolConfig = require('./helpers/connection'),
+    poolConfig = _.clone(require('./helpers/connection'), true),
     config = require('./helpers/cql3'),
     canSelectCQLVersion = require('./helpers/can_select_cql_version')
     ;

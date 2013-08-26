@@ -13,11 +13,8 @@ var
 var
     scamandrios = require('../index'),
     Connection = scamandrios.Connection,
-    poolConfig = require('./helpers/connection')
+    poolConfig = _.clone(require('./helpers/connection'), true)
     ;
-
-
-var testConn;
 
 describe('connection lifespan', function()
 {
@@ -94,11 +91,14 @@ describe('connection lifespan', function()
 
     it('pools should jitter the lifespan of their connections', function()
     {
-        poolConfig.hosts.push(poolConfig.hosts[0]);
-        poolConfig.hosts.push(poolConfig.hosts[0]);
-        poolConfig.hosts.push(poolConfig.hosts[0]);
-        poolConfig.hosts.push(poolConfig.hosts[0]);
-        poolConfig.hosts.push(poolConfig.hosts[0]);
+        if (poolConfig.hosts.length < 2)
+        {
+            poolConfig.hosts.push(poolConfig.hosts[0]);
+            poolConfig.hosts.push(poolConfig.hosts[0]);
+            poolConfig.hosts.push(poolConfig.hosts[0]);
+            poolConfig.hosts.push(poolConfig.hosts[0]);
+            poolConfig.hosts.push(poolConfig.hosts[0]);
+        }
 
         var pool = new scamandrios.ConnectionPool(poolConfig);
         var ttls = _.map(pool.hosts, function(h)
@@ -110,5 +110,4 @@ describe('connection lifespan', function()
         assert.ok(_.all(ttls, function(n) { return n >= Connection.TTL; }));
         assert.equal(ttls.length, _.uniq(ttls).length);
     });
-
 });

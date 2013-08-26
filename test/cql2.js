@@ -1,16 +1,17 @@
 /*global describe: true, it: true, before: true, after: true */
 
-var chai = require('chai'),
+var _              = require('lodash'),
+    chai           = require('chai'),
     chaiAsPromised = require('chai-as-promised'),
-    P = require('p-promise');
+    P              = require('p-promise');
 
 require('mocha-as-promised')();
 
 var scamandrios = require('../');
 
-var poolSettings = require('./helpers/connection.json'),
-    badSettings = require('./helpers/bad_connection.json'),
-    commands = require('./helpers/cql2.json'),
+var poolSettings        = _.clone(require('./helpers/connection.json')),
+    badSettings         = require('./helpers/bad_connection.json'),
+    commands            = require('./helpers/cql2.json'),
     canSelectCQLVersion = require('./helpers/can_select_cql_version');
 
 var assert = chai.assert,
