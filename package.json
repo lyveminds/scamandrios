@@ -15,10 +15,10 @@
         "Christoph Tavan <dev@tavan.de>",
         "Calvin French-Owen <calvin@segment.io>"
     ],
-    "homepage": "https://github.com/ceejbot/scamandrios",
+    "homepage": "https://github.com/blackpearlsystems/scamandrios",
     "repository":
     {
-        "url": "git://github.com/ceejbot/scamandrios.git"
+        "url": "git://github.com/blackpearlsystems/scamandrios.git"
     },
     "dependencies":
     {
