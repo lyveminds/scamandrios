@@ -17,6 +17,6 @@ script:
 
 notifications:
     hipchat:
-        secure: "NtDJQMKBYbKYy1bdlONYYExDUQ0CTNVue8iVw6NzBzULgzsx66CDytRnIwxhh0CO5g034BGVt9p6ZiJOYINjDGVAXAJv1WjTUQ8ZXlOhi2BsMSjeMcf+Vl4W0spXHwNK6yzmpdqFDjPjcmG85p53jYBkdnqfUyXLDghMx3CeIJw="
+        secure: "fPlQmSh5x85hFv8tjG/0LcQayHFjll1R5svC2nEZ6Jp51Ymdw9l6tVZ+X3Mq1WrqB40hehlHw2W7QM9hhK/2iFDvR/SQKYHodmVCuKFioYpgLsCRHsu3mEjiGmd/3whIA8v6tDa5AAfpic3HFVXPzs0IV/cbe2y3TUddmVDqFGk="
     webhooks:
-        secure: "EfIi3zr/0zyE2mwmF6PWk9nH2xWyGsF/zh28iA9F224Y6QJ+WpyXDa0eiFc4leunQwC/LSJ9xV9F5PYnokl3o7SEwnNKFedrVM8boBfOyVpEtKkaLFSpJJvv0+mbodlHB2G5O1m5G5UBcuOMps2UUJllhijtJZWsN53EGh/iXxw="
+        secure: "kRhZpReiZD1m6qtxZ8RFq1VXH0TZH66i20rDxoMQnoPxn1RDB+VxtcC4MG/lSlLQpk+brehjioRNOVLm8idwqJoCu3VhWqZ70TdgkCNws9rFiXgjy6DYfg56/wwsjXNZYAiW2ymdHa5HpEYHsD2x69En6AvwuLfltxKg0+yL+iM="
