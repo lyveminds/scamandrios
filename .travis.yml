@@ -14,3 +14,9 @@ before_install:
 
 script:
   - npm test
+
+notifications:
+    hipchat:
+        secure: "NtDJQMKBYbKYy1bdlONYYExDUQ0CTNVue8iVw6NzBzULgzsx66CDytRnIwxhh0CO5g034BGVt9p6ZiJOYINjDGVAXAJv1WjTUQ8ZXlOhi2BsMSjeMcf+Vl4W0spXHwNK6yzmpdqFDjPjcmG85p53jYBkdnqfUyXLDghMx3CeIJw="
+    webhooks:
+        secure: "EfIi3zr/0zyE2mwmF6PWk9nH2xWyGsF/zh28iA9F224Y6QJ+WpyXDa0eiFc4leunQwC/LSJ9xV9F5PYnokl3o7SEwnNKFedrVM8boBfOyVpEtKkaLFSpJJvv0+mbodlHB2G5O1m5G5UBcuOMps2UUJllhijtJZWsN53EGh/iXxw="
