@@ -65,7 +65,7 @@ describe('CQL 2', function ()
 
         it('can use a keyspace', function ()
         {
-            return pool.cql(commands['use#cql']).should.be.fulfilled;
+            return pool.executeCQLAllClients(new Buffer(commands['use#cql'])).should.be.fulfilled;
         });
 
         it('can create a column family', function ()

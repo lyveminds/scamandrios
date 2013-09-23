@@ -72,8 +72,8 @@ describe('cql3', function()
 
         it('can use a keyspace', function()
         {
-            var testquery = config['use#cql'];
-            var promise = conn.cql(testquery);
+            var testquery = new Buffer(config['use#cql']);
+            var promise = conn.executeCQLAllClients(testquery);
             return promise.should.be.fulfilled;
         });
     });
