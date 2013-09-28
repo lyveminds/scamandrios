@@ -2,6 +2,8 @@
 
 A promises API for Cassandra, forked from [helenus](https://github.com/simplereach/helenus). Helenus was Cassandra's twin brother. He was also known as Scamandrios. Like Cassandra, his prophecies were correct, but unlike her he was believed. 
 
+[![NPM](https://nodei.co/npm/scamandrios.png)](https://nodei.co/npm/scamandrios/)
+
 [![Build Status](https://secure.travis-ci.org/blackpearlsystems/scamandrios.png)](http://travis-ci.org/blackpearlsystems/scamandrios) [![Dependenciess](https://david-dm.org/blackpearlsystems/scamandrios.png)](https://david-dm.org/blackpearlsystems/scamandrios)
 
 To install:
@@ -138,6 +140,21 @@ Returns the query object so the function can be chained.
 Interpolate variables into the query string & execute the query. Takes a connection or connection pool parameter. Returns a promise that resolves to the result of the query.
 
 ### Conveniences
+
+### pool.health()
+
+Returns an object with two fields:
+
+```javascript
+{
+    healthy: [ 'happyHost1:port', 'happyHost2:port' ],
+    unhealthy: [ 'unhappyHost1:port', 'unhappyHost2:port']
+}
+```
+
+### pool.executeCQLAllClients(buffer)
+
+Executes the given CQL query on all active clients. Very useful if you want to point your entire connection pool at a single keyspace, for instance, or if you're executing a health-check query on all of them.
 
 #### connection.assignKeyspace(keyspaceName)
 
