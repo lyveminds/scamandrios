@@ -2,11 +2,7 @@
     "name":        "scamandrios",
     "version":     "0.2.2",
     "description": "node.js bindings for Cassandra with a promises API",
-    "keywords":
-    [
-        "cassandra",
-        "thrift"
-    ],
+    "keywords":    [ "cassandra", "cql3", "cql" ],
     "contributors":
     [
         "Kit Cambridge <kitcambridge@me.com>",
