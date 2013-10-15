@@ -232,6 +232,7 @@ describe('connection monitor', function()
                 assert.equal(errorsLogged, 1, 'expected at least one error');
                 assert.equal(resurrections, 1, 'expected one resurrection');
                 assert.equal(pool.dead.length, 0, 'expected 0 dead');
+                assert.equal(pool.clients.length, poolConfig.hosts.length, 'we proliferated hosts on resurrection :(')
                 assert.equal(pool.checkInProgress, false, 'checkInProgress is still true');
                 done();
             })
