@@ -30,6 +30,7 @@
         "blanket":           "*",
         "chai-as-promised":  "*",
         "mocha-as-promised": "*",
+        "sinon":             "*",
         "travis-cov":        "*"
     },
     "scripts":

@@ -110,10 +110,13 @@ describe('connection lifespan', function()
         assert.ok(_.all(ttls, function(n) { return n >= Connection.TTL; }));
         assert.equal(ttls.length, _.uniq(ttls).length);
     });
+});
 
-    it('monitorConnections() should check the health of all connections', function(done)
+describe('connection monitor', function()
+{
+    it('should check the health of all connections', function(done)
     {
-        this.timeout(20000);
+        this.timeout(5000);
         var pool = new scamandrios.ConnectionPool(poolConfig);
 
         var connections = 0;
@@ -133,8 +136,50 @@ describe('connection lifespan', function()
             .then(function(result)
             {
                 assert.isArray(pool.dead, 'dead pool is not array');
-                assert.equal(result, 'monitor good', 'unexpected message');
+                assert.equal(result, 'monitor done', 'unexpected message');
                 assert.equal(pool.checkInProgress, false, 'checkInProgress is still true');
+                done();
+            }).done();
+        }
+
+        pool.connect();
+    });
+
+
+    it('rechecks hosts that were dead on first connect', function(done)
+    {
+        this.timeout(10000);
+
+        var configWithRinger = _.clone(poolConfig);
+        configWithRinger.hosts.push('10.0.0.1:9137');
+
+        var pool = new scamandrios.ConnectionPool(configWithRinger);
+
+        var connections = 0;
+        pool.on('log', function(msg)
+        {
+            if (msg.match(/connection established/))
+                connections++;
+            else if (msg.match(/initial connection failed/))
+                connections++;
+
+            if (connections === poolConfig.hosts.length)
+                runTest();
+        });
+
+        function runTest()
+        {
+            pool.monitorConnections()
+            .then(function(result)
+            {
+                assert.isArray(pool.dead, 'dead pool is not array');
+                assert.equal(pool.dead.length, 1, 'expected 1 dead');
+                assert.equal(pool.clients.length, configWithRinger.hosts.length - 1, 'dead client still in the list!');
+                assert.equal(pool.checkInProgress, false, 'checkInProgress is still true');
+                return pool.close();
+            })
+            .then(function(r)
+            {
                 done();
             }).done();
         }
