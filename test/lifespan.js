@@ -110,4 +110,35 @@ describe('connection lifespan', function()
         assert.ok(_.all(ttls, function(n) { return n >= Connection.TTL; }));
         assert.equal(ttls.length, _.uniq(ttls).length);
     });
+
+    it('monitorConnections() should check the health of all connections', function(done)
+    {
+        this.timeout(20000);
+        var pool = new scamandrios.ConnectionPool(poolConfig);
+
+        var connections = 0;
+        pool.on('log', function(msg)
+        {
+            if (msg.match(/connection established/))
+            {
+                connections++;
+                if (connections === poolConfig.hosts.length)
+                    runTest();
+            }
+        });
+
+        function runTest()
+        {
+            pool.monitorConnections()
+            .then(function(result)
+            {
+                assert.isArray(pool.dead, 'dead pool is not array');
+                assert.equal(result, 'monitor good', 'unexpected message');
+                assert.equal(pool.checkInProgress, false, 'checkInProgress is still true');
+                done();
+            }).done();
+        }
+
+        pool.connect();
+    });
 });
