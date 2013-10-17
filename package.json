@@ -1,6 +1,6 @@
 {
     "name":        "scamandrios",
-    "version":     "0.2.3",
+    "version":     "0.2.4",
     "description": "node.js bindings for Cassandra with a promises API",
     "keywords":    [ "cassandra", "cql3", "cql" ],
     "contributors":
@@ -30,6 +30,7 @@
         "blanket":           "*",
         "chai-as-promised":  "*",
         "mocha-as-promised": "*",
+        "sinon":             "*",
         "travis-cov":        "*"
     },
     "scripts":
