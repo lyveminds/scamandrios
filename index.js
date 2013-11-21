@@ -14,5 +14,8 @@ module.exports =
     UUID             : require('./lib/uuid').UUID,
     TimeUUID         : require('./lib/uuid').TimeUUID,
     ConsistencyLevel : require('./lib/cassandra/cassandra_types').ConsistencyLevel,
-    Query            : require('./lib/query')
+    Query            : require('./lib/query'),
+
+    discover         : require('./lib/discovery').discover,
+    discoverPool     : require('./lib/discovery').discoverPool,
 };
