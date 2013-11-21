@@ -39,7 +39,7 @@ var pool = new scamandrios.ConnectionPool(
 
 Specify the `cqlVersion` parameter if you do not wish to use CQL 3.0.
 
-You can supply a function in the `getHost` parameter to override the random host selection that the pool will perform when handling a request. __NOTE:__ We intend to replace the pool implementation with one based on [poolee](https://github.com/dannycoates/poolee), so overriding will eventually be impossible as well as something you probably won't ever feel the need to do.
+You can supply a function in the `getHost` parameter to override the random host selection that the pool will perform when handling a request.
 
 As with most error-emitting objects in node, if you do not listen for `error` it will bubble up to `process.uncaughtException`.
 
@@ -140,6 +140,30 @@ Returns the query object so the function can be chained.
 Interpolate variables into the query string & execute the query. Takes a connection or connection pool parameter. Returns a promise that resolves to the result of the query.
 
 ### Conveniences
+
+### scamandrios.discover(seed)
+
+Given a seed node, return an array of peers in the Cassandra ring. The hosts will be dotted quad addresses and will not include any port information.
+
+```javascript
+scamandrios.discover('10.0.0.1:9160')
+.then(function(hosts)
+{
+    console.log(hosts);
+});
+```
+
+### scamandrios.discoverPool(seed, connectionOptions)
+
+Given a seed node, return a ConnectionPool configured with the given options. This function assumes that your Cassandra hosts are all using the default port `9160`.
+
+```javascript
+scamandrios.discoverPool('10.0.0.1:9160', { user: 'fred', password: 'mischief managed', timeout: 5000 })
+.then(function(pool)
+{
+    return pool.connect();
+});
+```
 
 ### pool.health()
 
