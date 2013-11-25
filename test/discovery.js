@@ -9,8 +9,8 @@ var
     util        = require('util')
     ;
 
-var seedNode = '172.16.46.211:9160';
-var fullRing = [ '172.16.46.211', '172.16.12.48', '172.16.16.93' ];
+var seedNode = '172.16.50.24:9160';
+var fullRing = [ '172.16.0.10', '172.16.34.68', '172.16.50.24' ];
 
 describe('ring discovery', function()
 {
@@ -38,7 +38,7 @@ describe('ring discovery', function()
 
         it('can take object input', function(done)
         {
-            var node = { host: '172.16.46.211', port: '9160' };
+            var node = { host: '172.16.50.24', port: '9160' };
             scamandrios.discover(node)
             .then(function(list)
             {

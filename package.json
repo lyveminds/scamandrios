@@ -1,6 +1,6 @@
 {
     "name":        "scamandrios",
-    "version":     "0.2.5",
+    "version":     "0.2.6",
     "description": "node.js bindings for Cassandra with a promises API",
     "keywords":    [ "cassandra", "cql3", "cql" ],
     "contributors":
