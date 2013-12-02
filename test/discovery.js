@@ -10,6 +10,7 @@ var
     ;
 
 var seedNode = '172.16.29.211:9160';
+var proxySeed = 'cassint.discovery.inf.blackpearlsystems.net:9160';
 var fullRing = [ '172.16.0.10', '172.16.34.68', '172.16.29.211' ];
 
 describe('ring discovery', function()
@@ -39,6 +40,22 @@ describe('ring discovery', function()
         it('can take object input', function(done)
         {
             var node = { host: '172.16.29.211', port: '9160' };
+            scamandrios.discover(node)
+            .then(function(list)
+            {
+                Array.isArray(list).must.be.true();
+                list.length.must.equal(3);
+                done();
+            })
+            .fail(function(err)
+            {
+                demand(err).be.undefined();
+            }).done();
+        });
+
+        it('respects the lookupSeed option', function(done)
+        {
+            var node = { host: 'cassint.discovery.inf.blackpearlsystems.net', port: '9160', lookupSeed: true };
             scamandrios.discover(node)
             .then(function(list)
             {

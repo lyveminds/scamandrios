@@ -153,6 +153,25 @@ scamandrios.discover('10.0.0.1:9160')
 });
 ```
 
+Discover can also take an options object:
+
+```javascript
+var opts = 
+{
+    host: 'loadbalancing.proxy.example.com',
+    port: '9160',
+    user: 'george',
+    password: 'mischief managed',
+    lookupSeed: true   // do a second query to discovery the IP of the seed node
+};
+
+scamandrios.discover(opts)
+.then(function(hosts)
+{
+    console.log(hosts);
+});
+```
+
 ### scamandrios.discoverPool(seed, connectionOptions)
 
 Given a seed node, return a ConnectionPool configured with the given options. This function assumes that your Cassandra hosts are all using the default port `9160`.
