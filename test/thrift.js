@@ -64,7 +64,7 @@ describe('thrift', function()
             ]);
         });
 
-        it('bad pool connect', function()
+        it('bad pool connect', function(done)
         {
             this.timeout(3500);
 
@@ -73,17 +73,21 @@ describe('thrift', function()
             {
                 expect(error).to.exist;
             });
-            var promise = badPool.connect();
-            return promise.should.be.rejected.fail(function()
+
+            badPool.connect()
+            .then(function() { throw new Error('this should have failed!'); },
+            function(err)
             {
-                return badPool.createKeyspace(config.keyspace);
-            }).should.be.rejected.fail(function()
-            {
+                expect(err).to.exist;
                 return badPool.dropKeyspace(config.keyspace);
-            }).should.be.rejected.fail(function()
+            })
+            .then(function() { throw new Error('this should have failed!'); },
+            function(err)
             {
-                return closePool(badPool);
-            }).should.be.fulfilled;
+                expect(err).to.exist;
+                closePool(badPool);
+                done();
+            }).done();
         });
 
         it('pool.assignKeyspace should create nonexistent keyspaces', function()
@@ -227,10 +231,16 @@ describe('thrift', function()
             ]);
         });
 
-        it('keyspace.get invalid cf', function()
+        it('keyspace.get invalid cf', function(done)
         {
-            var promise = keySpace.get(config.cf_invalid);
-            return promise.should.be.rejected.with(Error, /ColumnFamily cf_invalid_test Not Found/);
+            keySpace.get(config.cf_invalid)
+            .then(function() { throw new Error('this should have failed!'); })
+            .fail(function(err)
+            {
+                expect(err).to.exist;
+                err.name.should.equal('ScamandriosNotFoundError');
+                done();
+            }).done();
         });
 
         it('keyspace.withTables is a promise for an object containing tables', function(done)
@@ -515,17 +525,17 @@ describe('thrift', function()
             ]);
         });
 
-        it('cf.get can error', function()
+        it('cf.get can error', function(done)
         {
-            var promise = cfStandard.get(config.standard_row_key, config.standard_get_options_error);
-            return P.all(
-            [
-                promise.should.be.rejected.with(Error),
-                promise.fail(_.identity).should.eventually.have.property('name', 'InvalidRequestException').then(function(error)
-                {
-                    return error.why;
-                }).should.become('range finish must come after start in the order of traversal')
-            ]);
+            cfStandard.get(config.standard_row_key, config.standard_get_options_error)
+            .then(function() { throw new Error('this should have failed!'); })
+            .fail(function(err)
+            {
+                expect(err).to.exist;
+                err.name.should.equal('InvalidRequestException');
+                err.why.should.equal('range finish must come after start in the order of traversal');
+                done();
+            }).done();
         });
 
         it('cf.get can get with index', function()

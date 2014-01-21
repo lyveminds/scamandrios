@@ -1,6 +1,4 @@
 {
-  "hosts"      : ["localhost:9160"],
-  "user"       : "test",
-  "password"   : "test1233",
+  "hosts"      : [ "172.16.22.114:9160" ],
   "timeout"    : 3000
 }

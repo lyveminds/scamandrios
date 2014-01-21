@@ -39,7 +39,7 @@
         "test":       "./node_modules/.bin/plz display=dot test && ./node_modules/.bin/plz test-cov",
         "test-simple": "./node_modules/.bin/mocha -R spec test/query.js test/units.js test/monitor.js test/discovery.js",
         "test-old": "./node_modules/.bin/mocha -R spec test/cql2.js test/thrift.js",
-        "travis-cov": { "threshold": 85 }
+        "travis-cov": { "threshold": 80 }
     },
     "config":
     {
