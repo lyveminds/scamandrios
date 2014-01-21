@@ -13,6 +13,14 @@ var seedNode = '172.16.9.37:9160';
 var proxySeed = 'cassint.discovery.inf.blackpearlsystems.net:9160';
 var fullRing = [ "172.16.22.114", "172.16.9.37", "172.16.38.120" ];
 
+if (process.env.TRAVIS)
+{
+    seedNode = '10.0.0.1';
+    proxySeed = 'localhost';
+    fullRing = [ '10.0.0.1:9160' ];
+}
+
+
 describe('ring discovery', function()
 {
     describe('discover()', function()
