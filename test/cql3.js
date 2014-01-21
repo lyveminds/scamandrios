@@ -29,16 +29,8 @@ describe('cql3', function()
     before(function()
     {
         poolConfig.cqlVersion = '3.0.0';
-        return canSelectCQLVersion(poolConfig).then(function(canSelect)
-        {
-            if (!canSelect)
-            {
-                console.error('The `cqlVersion` cannot be set; skipping CQL 3 tests.');
-                return process.exit();
-            }
-            conn = new scamandrios.ConnectionPool(poolConfig);
-            return conn.connect().should.be.fulfilled;
-        });
+        conn = new scamandrios.ConnectionPool(poolConfig);
+        return conn.connect().should.be.fulfilled;
     });
 
     describe('connection and keyspaces', function()
