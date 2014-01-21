@@ -1,7 +1,7 @@
 /*global describe:true, it:true, before:true, after:true */
 
 var
-    demand        = require('must'),
+    demand      = require('must'),
     _           = require('lodash'),
     P           = require('p-promise'),
     scamandrios = require('../index'),
@@ -9,9 +9,17 @@ var
     util        = require('util')
     ;
 
-var seedNode = '172.16.29.211:9160';
+var seedNode = '172.16.9.37:9160';
 var proxySeed = 'cassint.discovery.inf.blackpearlsystems.net:9160';
-var fullRing = [ '172.16.0.10', '172.16.34.68', '172.16.29.211' ];
+var fullRing = [ "172.16.22.114", "172.16.9.37", "172.16.38.120" ];
+
+if (process.env.TRAVIS)
+{
+    seedNode = 'localhost';
+    proxySeed = 'localhost';
+    fullRing = [ 'localhost:9160' ];
+}
+
 
 describe('ring discovery', function()
 {
@@ -23,7 +31,7 @@ describe('ring discovery', function()
             .then(function(list)
             {
                 Array.isArray(list).must.be.true();
-                list.length.must.equal(3);
+                list.length.must.equal(fullRing.length);
                 _.each(list, function(item)
                 {
                     item.must.be.a.string();
@@ -39,12 +47,12 @@ describe('ring discovery', function()
 
         it('can take object input', function(done)
         {
-            var node = { host: '172.16.29.211', port: '9160' };
+            var node = { host: '172.16.9.37', port: '9160' };
             scamandrios.discover(node)
             .then(function(list)
             {
                 Array.isArray(list).must.be.true();
-                list.length.must.equal(3);
+                list.length.must.equal(fullRing.length);
                 done();
             })
             .fail(function(err)
@@ -60,7 +68,7 @@ describe('ring discovery', function()
             .then(function(list)
             {
                 Array.isArray(list).must.be.true();
-                list.length.must.equal(3);
+                list.length.must.equal(fullRing.length);
                 done();
             })
             .fail(function(err)
@@ -91,7 +99,7 @@ describe('ring discovery', function()
             {
                 result.must.exist();
                 result.must.be.an.instanceof(scamandrios.ConnectionPool);
-                result.hosts.length.must.equal(3);
+                result.hosts.length.must.equal(fullRing.length);
                 done();
             })
             .fail(function(err)

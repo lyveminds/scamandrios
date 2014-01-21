@@ -1,9 +1,8 @@
 /*global describe:true, it:true, before:true, after:true */
 
 var
+    demand = require('must'),
     chai = require('chai'),
-    assert = chai.assert,
-    expect = chai.expect,
     should = chai.should(),
     chaiAsPromised = require('chai-as-promised'),
     util = require('util'),
@@ -29,16 +28,8 @@ describe('cql3', function()
     before(function()
     {
         poolConfig.cqlVersion = '3.0.0';
-        return canSelectCQLVersion(poolConfig).then(function(canSelect)
-        {
-            if (!canSelect)
-            {
-                console.error('The `cqlVersion` cannot be set; skipping CQL 3 tests.');
-                return process.exit();
-            }
-            conn = new scamandrios.ConnectionPool(poolConfig);
-            return conn.connect().should.be.fulfilled;
-        });
+        conn = new scamandrios.ConnectionPool(poolConfig);
+        return conn.connect().should.be.fulfilled;
     });
 
     describe('connection and keyspaces', function()
@@ -49,7 +40,7 @@ describe('cql3', function()
             var badConn = new scamandrios.ConnectionPool(badConfig);
             badConn.on('error', function(error)
             {
-                expect(error).to.exist;
+                demand(error).be.undefined();
             });
             var promise = badConn.connect();
             return promise.should.be.rejected.then(function()
@@ -108,121 +99,143 @@ describe('cql3', function()
             return promise.should.be.fulfilled;
         });
 
-        it('select', function()
+        it('select', function(done)
         {
             var testquery = config['static_select#cql'];
-            var promise = conn.cql(testquery).should.be.fulfilled;
 
-            return promise.should.eventually.have.property('length', 1).then(function(value)
+            conn.cql(testquery)
+            .then(function(result)
             {
-                return value[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).then(function(row)
-            {
-                return row.get('foo');
-            }).should.eventually.have.property('value', 'bar');
+                result.length.must.equal(1);
+                var row = result[0];
+                var foo = row.get('foo');
+                foo.value.must.equal('bar');
+                done();
+            })
+            .done();
         });
 
-        it('select *', function()
+        it('select *', function(done)
         {
             var testquery = config['static_select*#cql'];
-            var promise = conn.cql(testquery).should.be.fulfilled;
 
-            return promise.should.eventually.have.property('length', 1).then(function(value)
+            conn.cql(testquery)
+            .then(function(result)
             {
-                return value[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).then(function(row)
-            {
-                return row.get('foo');
-            }).should.eventually.have.property('value', 'bar');
+                result.length.must.equal(1);
+                var row = result[0];
+                var foo = row.get('foo');
+                foo.value.must.equal('bar');
+                done();
+            })
+            .done();
         });
 
-        it('static counter CF select', function()
+        it('static counter CF select', function(done)
         {
             var testquery = config['static_select_cnt#cql'];
-            var promise = conn.cql(testquery).should.be.fulfilled;
 
-            return promise.should.eventually.have.property('length', 1).then(function(value)
+            conn.cql(testquery)
+            .then(function(result)
             {
-                return value[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).then(function(row)
-            {
-                return row.get('cnt');
-            }).should.eventually.have.property('value', 10);
+                result.length.must.equal(1);
+                var row = result[0];
+                var count = row.get('cnt');
+                count.value.must.equal(10);
+                done();
+            })
+            .done();
         });
 
-        it('test cql static counter CF incr and select', function()
+        it('test cql static counter CF incr and select', function(done)
         {
             var testquery = config['static_update_cnt#cql'];
-            var promise = conn.cql(testquery).should.be.fulfilled;
 
-            return promise.then(function(v1)
+            conn.cql(testquery)
+            .then(function(v1)
             {
-                var p2 = conn.cql(config['static_select_cnt#cql']);
-                return p2.should.eventually.have.property('length', 1).then(function(value)
-                {
-                    return value[0];
-                });
-            }).should.eventually.be.an.instanceof(scamandrios.Row).then(function(row)
+                return conn.cql(config['static_select_cnt#cql']);
+            })
+            .then(function(p2)
             {
-                return row.get('cnt');
-            }).should.eventually.have.property('value', 20);
+                p2.length.must.equal(1);
+                p2[0].must.be.instanceof(scamandrios.Row);
+                var count = p2[0].get('cnt');
+                count.value.must.equal(20);
+                done();
+            })
+            .done();
         });
 
-        // continue here
         it('select with bad user input', function()
         {
             var promise = conn.cql("SELECT foo FROM cql_test WHERE id='?'", ["'foobar"]);
             return promise.should.be.fulfilled;
         });
 
-        it('count', function()
+        it('count', function(done)
         {
-            var promise = conn.cql(config['static_count#cql']).should.be.fulfilled;
+            var testquery = config['static_count#cql'];
 
-            return promise.should.eventually.have.property('length', 1).then(function(value)
+            conn.cql(testquery)
+            .then(function(result)
             {
-                return value[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).then(function(row)
-            {
-                return row.get('count');
-            }).should.eventually.have.property('value', 1);
+                result.length.must.equal(1);
+                var row = result[0];
+                var count = row.get('count');
+                count.value.must.equal(1);
+                done();
+            })
+            .done();
         });
 
-        it('error', function()
+        it('error', function(done)
         {
-            var promise = conn.cql(config['error#cql']);
+            var testquery = config['error#cql'];
 
-            return P.all(
-            [
-                promise.should.be.rejected.with(Error),
-                promise.fail(_.identity).should.eventually.have.property('name', 'InvalidRequestException').then(function(error)
-                {
-                    return error.why.length;
-                }).should.eventually.be.above(0)
-            ]);
+            conn.cql(testquery)
+            .then(function(result)
+            {
+                throw new Error('this query was supposed to produce an error!');
+            })
+            .fail(function(err)
+            {
+                err.must.have.property('name');
+                err.name.must.equal('InvalidRequestException');
+                err.why.must.match(/no viable alternative/);
+                done();
+            }).done();
         });
 
-        it('count with gzip', function()
+        it('count with gzip', function(done)
         {
-            var promise = conn.cql(config['static_count#cql'], { gzip:true }).should.be.fulfilled;
+            var testquery = config['static_count#cql'];
 
-            return promise.should.eventually.have.property('length', 1).then(function(value)
+            conn.cql(testquery, { gzip:true })
+            .then(function(result)
             {
-                return value[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).then(function(row)
-            {
-                return row.get('count').value;
-            }).should.eventually.equal(1);
+                result.length.must.equal(1);
+                result[0].must.be.instanceof(scamandrios.Row);
+                var count = result[0].get('count');
+                count.value.must.equal(1);
+                done();
+            }).done();
         });
 
-        it('delete', function()
+        it('delete', function(done)
         {
-            var promise = conn.cql(config['static_delete#cql']).should.be.fulfilled;
-            return promise.then(function(resp)
+            var testquery = config['static_delete#cql'];
+
+            conn.cql(testquery)
+            .then(function(result)
             {
-                var promise2 = conn.cql(config['static_select2#cql'], config['static_select2#vals']);
-                return promise2.should.be.fulfilled;
-            });
+                return conn.cql(config['static_select2#cql'], config['static_select2#vals']);
+            })
+            .then(function(result)
+            {
+                result.must.be.an.object();
+                done();
+            }).done();
         });
 
         it('drop a static column family', function()
@@ -258,24 +271,27 @@ describe('cql3', function()
             return promise.should.be.fulfilled;
         });
 
-        it('can select by row', function()
+        it('can select by row', function(done)
         {
             function getTimeFromRow(row)
             {
                 return row.get('ts').value.getTime();
             }
 
-            var promise = conn.cql(config['dynamic_select1#cql']).should.be.fulfilled;
-
-            return promise.should.eventually.have.property('length', 2).then(function(results)
+            conn.cql(config['dynamic_select1#cql'])
+            .then(function(result)
             {
-                var timeStamps = _.map(results, function(result)
+                result.length.must.equal(2);
+                var timestamps = _.map(result, function(row)
                 {
-                    var assertion = P(result).should.eventually.be.an.instanceof(scamandrios.Row);
-                    return assertion.then(getTimeFromRow);
+                    return getTimeFromRow(row);
                 });
-                return P.all(timeStamps);
-            }).should.become([new Date('2012-03-01').getTime(), new Date('2012-03-02').getTime()]);
+
+                timestamps[0].must.equal(new Date('2012-03-01').getTime());
+                timestamps[1].must.equal(new Date('2012-03-02').getTime());
+
+                done();
+            }).done();
         });
     });
 
@@ -305,50 +321,48 @@ describe('cql3', function()
             return promise.should.be.fulfilled;
         });
 
-        it('can select by row', function()
+        it('can select by row', function(done)
         {
             function getDataFromRow(row)
             {
                 return [row.get('ts').value.getTime(), row.get('port').value];
             }
 
-            var promise = conn.cql(config['dense_select1#cql']).should.be.fulfilled;
-
-            return promise.should.eventually.have.property('length', 2).then(function(results)
+            conn.cql(config['dense_select1#cql'])
+            .then(function(result)
             {
-                var timeStamps = _.map(results, function(result)
+                result.length.must.equal(2);
+                result.length.must.equal(2);
+                var timestamps = _.map(result, function(row)
                 {
-                    var assertion = P(result).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 2);
-                    return assertion.then(getDataFromRow);
+                    return getDataFromRow(row);
                 });
-                return P.all(timeStamps);
-            }).should.become([[new Date('2012-03-02').getTime(), 1337], [new Date('2012-03-01').getTime(), 8080]]);
+
+                timestamps[0].must.eql([new Date('2012-03-02').getTime(), 1337]);
+                timestamps[1].must.eql([new Date('2012-03-01').getTime(), 8080]);
+
+                done();
+            }).done();
         });
 
-        it('can select by row and column', function()
+        it('can select by row and column', function(done)
         {
-            var promise = conn.cql(config['dense_select2#cql']).should.be.fulfilled;
+            conn.cql(config['dense_select2#cql'])
+            .then(function(result)
+            {
+                result.length.must.equal(1);
+                var row = result[0];
+                row.must.be.instanceof(scamandrios.Row);
+                row.must.have.property('length');
+                row.length.must.equal(4);
 
-            return promise.should.eventually.have.property('length', 1).then(function(result)
-            {
-                return result[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 4).then(function(result)
-            {
-                var values =
-                {
-                    'userid': result.get('userid').value,
-                    'ip': result.get('ip').value,
-                    'port': result.get('port').value,
-                    'ts': result.get('ts').value.getTime()
-                };
-                return values;
-            }).should.become(
-            {
-                'userid': 10,
-                'ip': '192.168.1.1',
-                'port': 1337,
-                'ts': new Date('2012-03-02').getTime()
-            });
+                row.get('userid').value.must.equal(10);
+                row.get('ip').value.must.equal('192.168.1.1');
+                row.get('port').value.must.equal(1337);
+                row.get('ts').value.getTime().must.equal(new Date('2012-03-02').getTime());
+
+                done();
+            }).done();
         });
     });
 
@@ -378,52 +392,42 @@ describe('cql3', function()
             return promise.should.be.fulfilled;
         });
 
-        it('can select by row', function()
+        it('can select by row', function(done)
         {
-            var promise = conn.cql(config['sparse_select1#cql']).should.be.fulfilled;
+            conn.cql(config['sparse_select1#cql'])
+            .then(function(result)
+            {
+                result.length.must.equal(1);
+                var row = result[0];
+                row.must.be.instanceof(scamandrios.Row);
+                row.must.have.property('length');
+                row.length.must.equal(3);
 
-            return promise.should.eventually.have.property('length', 1).then(function(result)
-            {
-                return result[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 3).then(function(result)
-            {
-                var values =
-                {
-                    'posted_at': result.get('posted_at').value.getTime(),
-                    'body': result.get('body').value,
-                    'posted_by': result.get('posted_by').value
-                };
-                return values;
-            }).should.become(
-            {
-                'posted_at': new Date('2012-03-02').getTime(),
-                'body': 'body text 3',
-                'posted_by': 'author3'
-            });
+                row.get('posted_at').value.getTime().must.equal(new Date('2012-03-02').getTime());
+                row.get('body').value.must.equal('body text 3');
+                row.get('posted_by').value.must.equal('author3');
+
+                done();
+            }).done();
         });
 
-        it('can select by row and column', function()
+        it('can select by row and column', function(done)
         {
-            var promise = conn.cql(config['sparse_select2#cql']).should.be.fulfilled;
+            conn.cql(config['sparse_select2#cql'])
+            .then(function(result)
+            {
+                result.length.must.equal(1);
+                var row = result[0];
+                row.must.be.instanceof(scamandrios.Row);
+                row.must.have.property('length');
+                row.length.must.equal(2);
 
-            return promise.should.eventually.have.property('length', 1).then(function(result)
-            {
-                return result[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 2).then(function(result)
-            {
-                var values =
-                {
-                    'body': result.get('body').value,
-                    'posted_by': result.get('posted_by').value,
-                };
-                return values;
-            }).should.become(
-            {
-                'body': 'body text 1',
-                'posted_by': 'author1'
-            });
+                row.get('body').value.must.equal('body text 1');
+                row.get('posted_by').value.must.equal('author1');
+
+                done();
+            }).done();
         });
-
     });
 
     describe('uuids', function()
@@ -498,7 +502,7 @@ describe('cql3', function()
                         'v1': new scamandrios.TimeUUID('58fc1990-ec58-11e2-8dfa-6f0e4ebf00b7')
                     }
                 ]);
-            }).should.become(true)
+            }).should.become(true);
         });
     });
 
@@ -528,43 +532,61 @@ describe('cql3', function()
             return promise.should.be.fulfilled;
         });
 
-        it('can select positive numbers', function()
+        it('can select positive numbers', function(done)
         {
-            var promise = conn.cql(config['integers_select1#cql']).should.be.fulfilled;
+            conn.cql(config['integers_select1#cql'])
+            .then(function(result)
+            {
+                result.length.must.equal(1);
+                var row = result[0];
+                row.must.be.instanceof(scamandrios.Row);
+                row.must.have.property('length');
+                row.length.must.equal(3);
 
-            return promise.should.eventually.have.property('length', 1).then(function(result)
-            {
-                return result[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 3).then(function(result)
-            {
-                return _.pluck([result.get('number'), result.get('longnumber'), result.get('varnumber')], 'value');
-            }).should.become([1, 25, 36]);
+                row.get('number').value.must.equal(1);
+                row.get('longnumber').value.must.equal(25);
+                row.get('varnumber').value.must.equal(36);
+
+                done();
+            }).done();
         });
 
-        it('can select negative numbers', function()
+        it('can select negative numbers', function(done)
         {
-            var promise = conn.cql(config['integers_select2#cql']).should.be.fulfilled;
+            conn.cql(config['integers_select2#cql'])
+            .then(function(result)
+            {
+                result.length.must.equal(1);
+                var row = result[0];
+                row.must.be.instanceof(scamandrios.Row);
+                row.must.have.property('length');
+                row.length.must.equal(3);
 
-            return promise.should.eventually.have.property('length', 1).then(function(result)
-            {
-                return result[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 3).then(function(result)
-            {
-                return _.pluck([result.get('number'), result.get('longnumber'), result.get('varnumber')], 'value');
-            }).should.become([-1, -25, -36]);
+                row.get('number').value.must.equal(-1);
+                row.get('longnumber').value.must.equal(-25);
+                row.get('varnumber').value.must.equal(-36);
+
+                done();
+            }).done();
         });
 
-        it('can select negative numbers with 3 byte varint', function()
+        it('can select negative numbers with 3 byte varint', function(done)
         {
-            var promise = conn.cql(config['integers_select3#cql']).should.be.fulfilled;
+            conn.cql(config['integers_select3#cql'])
+            .then(function(result)
+            {
+                result.length.must.equal(1);
+                var row = result[0];
+                row.must.be.instanceof(scamandrios.Row);
+                row.must.have.property('length');
+                row.length.must.equal(3);
 
-            return promise.should.eventually.have.property('length', 1).then(function(result)
-            {
-                return result[0];
-            }).should.eventually.be.an.instanceof(scamandrios.Row).should.eventually.have.property('length', 3).then(function(result)
-            {
-                return _.pluck([result.get('number'), result.get('longnumber'), result.get('varnumber')], 'value');
-            }).should.become([-2, -25, -8388607]);
+                row.get('number').value.must.equal(-2);
+                row.get('longnumber').value.must.equal(-25);
+                row.get('varnumber').value.must.equal(-8388607);
+
+                done();
+            }).done();
         });
     });
 
@@ -595,8 +617,8 @@ describe('cql3', function()
                 created.should.be.a('date');
                 modified.should.be.a('date');
 
-                assert.equal(then.getTime(), created.getTime());
-                assert.equal(now.getTime(), modified.getTime());
+                then.getTime().must.equal(created.getTime());
+                now.getTime().must.equal(modified.getTime());
 
                 done();
             })
@@ -725,12 +747,13 @@ describe('cql3', function()
         });
     });
 
-    after(function()
+    after(function(done)
     {
         var deferred = P.defer();
-        conn.on('close', deferred.resolve);
+        conn.on('close', function()
+        {
+            done();
+        });
         conn.close();
-        return deferred.promise.should.be.fulfilled;
     });
-
 });

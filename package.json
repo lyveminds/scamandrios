@@ -19,30 +19,36 @@
     "dependencies":
     {
         "helenus-thrift": "git://github.com/blackpearlsystems/node-thrift.git",
-        "lodash":         "*",
-        "node-uuid":      "*",
-        "p-promise":      "*",
-        "semver":         "*"
+        "lodash":         "~2.4.1",
+        "node-uuid":      "~1.4.1",
+        "p-promise":      "~0.2.5",
+        "semver":         "~2.2.1"
     },
     "devDependencies":
     {
-        "plz":               "*",
-        "blanket":           "*",
-        "chai-as-promised":  "*",
-        "mocha-as-promised": "*",
-        "must":              "*",
-        "sinon":             "*",
-        "travis-cov":        "*"
+        "plz":               "~1.0.0",
+        "blanket":           "~1.1.6",
+        "chai-as-promised":  "~4.1.0k",
+        "mocha-as-promised": "~2.0.0",
+        "must":              "~0.10.0",
+        "sinon":             "~1.7.3",
+        "travis-cov":        "~0.2.4"
     },
     "scripts":
     {
-        "test":       "./node_modules/.bin/plz display=dot test && ./node_modules/.bin/plz test-cov",
+        "test":           "./node_modules/.bin/plz display=dot test && ./node_modules/.bin/plz test-cov",
+        "test-simple":    "./node_modules/.bin/mocha -R spec test/query.js test/units.js test/monitor.js",
+        "test-discovery": "./node_modules/.bin/mocha -R spec test/discovery.js test/discovery-pool.js",
+        "test-queries":   "./node_modules/.bin/mocha -R spec test/thrift.js test/cql2.js test/cql3.js",
+        "travis-cov":     { "threshold": 80 }
+    },
+    "config":
+    {
         "blanket":
         {
             "pattern": "//^((?!\/node_modules|test|doc|examples|cassandra\/).)*$/ig",
             "onlyCwd": true
-        },
-        "travis-cov": { "threshold": 85 }
+        }
     },
     "main":           "index",
     "engines":        { "node": ">= 0.8" },

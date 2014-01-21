@@ -18,4 +18,5 @@ module.exports =
 
     discover         : require('./lib/discovery').discover,
     discoverPool     : require('./lib/discovery').discoverPool,
+    DiscoveryPool    : require('./lib/discovery-pool'),
 };

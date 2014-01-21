@@ -4,7 +4,7 @@ A promises API for Cassandra, forked from [helenus](https://github.com/simplerea
 
 [![NPM](https://nodei.co/npm/scamandrios.png)](https://nodei.co/npm/scamandrios/)
 
-[![Build Status](https://secure.travis-ci.org/blackpearlsystems/scamandrios.png)](http://travis-ci.org/blackpearlsystems/scamandrios) [![Dependenciess](https://david-dm.org/blackpearlsystems/scamandrios.png)](https://david-dm.org/blackpearlsystems/scamandrios)
+[![Build Status](https://secure.travis-ci.org/lyveminds/scamandrios.png)](http://travis-ci.org/blackpearlsystems/scamandrios) [![Dependenciess](https://david-dm.org/lyveminds/scamandrios.png)](https://david-dm.org/blackpearlsystems/scamandrios)
 
 To install:
 
@@ -183,6 +183,31 @@ scamandrios.discoverPool('10.0.0.1:9160', { user: 'fred', password: 'mischief ma
     return pool.connect();
 });
 ```
+
+### DiscoveryPool
+
+If you would like your pool to automatically rediscover its nodes on a timer, use a `DiscoveryPool`.
+
+```javascript
+
+var DiscoveryPool = require(scamandrios).DiscoveryPool;
+
+var opts =
+{
+    user: 'george',
+    password: 'mischief managed',
+    lookupSeed: true
+};
+var pool = new DiscoveryPool('loadbalancing.proxy.example.com', opts);
+pool.connect()
+.then(function()
+{
+    // make queries etc
+}).done();
+
+```
+
+The seed node will be queried to discover the current state of the ring periodically. As nodes enter & leave, clients will be created & destroyed. The interval isn't yet configurable. It's 30 seconds aka the same as the monitor interval.
 
 ### pool.health()
 
