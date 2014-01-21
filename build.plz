@@ -1,5 +1,5 @@
 mocha = './node_modules/.bin/mocha'
-test_files = 'test/cql2.js test/cql3.js test/query.js test/thrift.js test/units.js test/lifespan.js'
+test_files = 'test/cql2.js test/cql3.js test/query.js test/thrift.js test/units.js test/monitor.js'
 
 task 'test', description: 'run unit tests', watch: 'lib/**/*', run: (options) ->
 	display = options.display or 'spec'
@@ -13,7 +13,7 @@ task 'test-cov', description: 'code coverage percentage', run: (options) ->
 task 'test-nothrift', description: 'run unit tests but skip the thrift tests', watch: 'lib/**/*', run: (options) ->
     display = options.display or 'spec'
     timeout = options.timeout or 5000
-    exec "#{mocha} -t #{timeout} -R #{display} --colors test/cql2.js test/cql3.js test/query.js test/units.js test/lifespan.js"
+    exec "#{mocha} -t #{timeout} -R #{display} --colors test/cql2.js test/cql3.js test/query.js test/units.js test/monitor.js"
 
 task 'coverage', description: 'code coverage percentage', run: (options) ->
 	timeout = options.timeout or 5000
