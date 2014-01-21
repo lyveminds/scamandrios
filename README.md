@@ -4,7 +4,7 @@ A promises API for Cassandra, forked from [helenus](https://github.com/simplerea
 
 [![NPM](https://nodei.co/npm/scamandrios.png)](https://nodei.co/npm/scamandrios/)
 
-[![Build Status](https://secure.travis-ci.org/blackpearlsystems/scamandrios.png)](http://travis-ci.org/blackpearlsystems/scamandrios) [![Dependenciess](https://david-dm.org/blackpearlsystems/scamandrios.png)](https://david-dm.org/blackpearlsystems/scamandrios)
+[![Build Status](https://secure.travis-ci.org/lyveminds/scamandrios.png)](http://travis-ci.org/blackpearlsystems/scamandrios) [![Dependenciess](https://david-dm.org/lyveminds/scamandrios.png)](https://david-dm.org/blackpearlsystems/scamandrios)
 
 To install:
 
