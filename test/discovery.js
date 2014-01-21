@@ -15,9 +15,9 @@ var fullRing = [ "172.16.22.114", "172.16.9.37", "172.16.38.120" ];
 
 if (process.env.TRAVIS)
 {
-    seedNode = '10.0.0.1';
+    seedNode = 'localhost';
     proxySeed = 'localhost';
-    fullRing = [ '10.0.0.1:9160' ];
+    fullRing = [ 'localhost:9160' ];
 }
 
 
