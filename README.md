@@ -184,6 +184,31 @@ scamandrios.discoverPool('10.0.0.1:9160', { user: 'fred', password: 'mischief ma
 });
 ```
 
+### DiscoveryPool
+
+If you would like your pool to automatically rediscover its nodes on a timer, use a `DiscoveryPool`.
+
+```javascript
+
+var DiscoveryPool = require(scamandrios).DiscoveryPool;
+
+var opts =
+{
+    user: 'george',
+    password: 'mischief managed',
+    lookupSeed: true
+};
+var pool = new DiscoveryPool('loadbalancing.proxy.example.com', opts);
+pool.connect()
+.then(function()
+{
+    // make queries etc
+}).done();
+
+```
+
+The seed node will be queried to discover the current state of the ring periodically. As nodes enter & leave, clients will be created & destroyed. The interval isn't yet configurable. It's 30 seconds aka the same as the monitor interval.
+
 ### pool.health()
 
 Returns an object with two fields:
