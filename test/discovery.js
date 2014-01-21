@@ -1,7 +1,7 @@
 /*global describe:true, it:true, before:true, after:true */
 
 var
-    demand        = require('must'),
+    demand      = require('must'),
     _           = require('lodash'),
     P           = require('p-promise'),
     scamandrios = require('../index'),

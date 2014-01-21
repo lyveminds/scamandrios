@@ -36,10 +36,11 @@
     },
     "scripts":
     {
-        "test":       "./node_modules/.bin/plz display=dot test && ./node_modules/.bin/plz test-cov",
-        "test-simple": "./node_modules/.bin/mocha -R spec test/query.js test/units.js test/monitor.js test/discovery.js",
-        "test-old": "./node_modules/.bin/mocha -R spec test/cql2.js test/thrift.js",
-        "travis-cov": { "threshold": 80 }
+        "test":           "./node_modules/.bin/plz display=dot test && ./node_modules/.bin/plz test-cov",
+        "test-simple":    "./node_modules/.bin/mocha -R spec test/query.js test/units.js test/monitor.js",
+        "test-discovery": "./node_modules/.bin/mocha -R spec test/discovery.js test/discovery-pool.js",
+        "test-queries":   "./node_modules/.bin/mocha -R spec test/thrift.js test/cql2.js test/cql3.js",
+        "travis-cov":     { "threshold": 80 }
     },
     "config":
     {
