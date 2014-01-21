@@ -94,7 +94,7 @@ describe('connection monitor', function()
         return P.reject('fail whale');
     }
 
-    it('notices when hosts go dead', function(done)
+    it('notices when client pings fail', function(done)
     {
         this.timeout(10000);
 
@@ -109,10 +109,10 @@ describe('connection monitor', function()
             if (msg.match(/connection established/))
             {
                 connections++;
-                if (connections === poolConfig.hosts.length)
+                if (connections === configWithStub.hosts.length)
                     runTest();
             }
-            else if (msg.match(/ping timeout/))
+            else if (msg.match(/unhealthy node/))
                 errorsLogged++;
             else if (msg.match(/rising from the dead/))
                 resurrections++;
@@ -126,15 +126,18 @@ describe('connection monitor', function()
             var stubbed = pool.clients[0];
             var stub = sinon.stub(stubbed, 'executeCQL', failWhaleQuery);
 
-            pool.monitorConnections()
-            .then(function(result)
+            stubbed.ping()
+            .then(function()
+            {
+                console.log('successful ping?')
+            })
+            .fail(function(err)
             {
                 pool.must.have.property('dead');
                 pool.dead.must.be.an.array();
-                pool.dead.length.must.equal(0);
+                pool.dead.length.must.equal(1);
                 errorsLogged.must.equal(1);
-                resurrections.must.equal(1);
-                pool.clients.length.must.equal(poolConfig.hosts.length);
+
                 done();
             }).done();
         }
