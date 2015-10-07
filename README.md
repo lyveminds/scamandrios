@@ -80,7 +80,7 @@ The first argument to `cql()` is the query string. The second is an array of ite
 
 ### CQL3 queries
 
-CQL can express a set of types more specific than javascript's types. To javascript, a Cassandra `set<text>` and a `list<text>` both look like arrays. We found it helpful to have a query-contruction API that accepted type hints, so sets and lists could be interpolated properly into query strings.
+CQL can express a set of types more specific than javascript's types. To javascript, a Cassandra `set<text>` and a `list<text>` both look like arrays. We found it helpful to have a query-construction API that accepted type hints, so sets and lists could be interpolated properly into query strings.
 
 The `scamandrios.Query` constructor exists to help you do this. Here's a somewhat contrived example:
 
